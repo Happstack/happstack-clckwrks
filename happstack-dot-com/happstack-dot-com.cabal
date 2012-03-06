@@ -26,7 +26,6 @@ Executable happstack-server
         clckwrks,
         clckwrks-plugin-media,
         containers == 0.4.*,
-        filepath == 1.3.*,
         mtl == 2.0.*,
         text,
         web-routes-happstack,
