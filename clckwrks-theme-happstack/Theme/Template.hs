@@ -23,9 +23,10 @@ template title headers body =
       <link rel="stylesheet" type="text/css" href=(ThemeData "hscolour.css") />
       <% headers %>
       -- TODO: only show when running on live site, not testing/devel
---      <% analyticsAsync (UACCT "UA-7111625-1") %>
+      -- <% analyticsAsync (UACCT "UA-7111625-1") %>
      </head>
      <body>
+      <span id="logo">Happstack</span>
       <% getMenu %>
       <% body %>
 
@@ -36,41 +37,3 @@ template title headers body =
     </div>
    </body>
   </html>
-
-{-
-
-template ::
-    ( EmbedAsChild headers
-    , EmbedAsChild body
-    ) =>
-       String 
-    -> headers
-    -> body
-    -> XMLGenT (Clck ClckURL) XML
-template title headers body =
-    <html>
-     <head>
-      <title><% getPageTitle %></title>
-      <link rel="stylesheet" type="text/css" href=(ThemeData "style.css")    />
-      <link rel="stylesheet" type="text/css" href=(ThemeData "hscolour.css") />
-     </head>
-     <body>
-      <div id="clckwrks-menu">
-        <span id="clck"><a href="/">Clck</a></span><span id="wrks"><a href="/">wrks</a></span><br />
-        <span id="clckwrks-byline">for secure, reliable, & <br />integrated websites</span>
-    --    <% getPageMenu %>
-        <% getMenu %>
-      </div>
-
-      <div id="clckwrks-body">
-       <% body %>
-
-       <p><a href=(Admin Console)>admin</a></p>
-       <p><a href=(Auth $ AuthURL A_Login)>login</a></p>
-
-      </div>
-     </body>
-    </html>
-
-
-       -}

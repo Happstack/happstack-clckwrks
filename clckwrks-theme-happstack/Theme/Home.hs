@@ -21,29 +21,29 @@ page =
           <div class="mesh"></div>
         
           <div class="img-text-bg"></div>
-          <div class="img-text">The relentless, uncompromised power and beauty of Haskell for the web</div>
-          <img src=(ThemeData "seven.png") />
+          <div class="img-text">The relentless, uncompromised power and beauty of Haskell in a web framework.</div>
+          <img src=(ThemeData "seven-black.png") />
          </div>
 
          <blockquote>
-          <p>The relentless, uncompromised power and beauty of Haskell for the web.</p>
+          <p>The relentless, uncompromised power and beauty of Haskell in a web framework.</p>
          </blockquote>
 
          <div class="summary-boxes">
           <div class="summary-box">
-           <h2>Elegance</h2>
+           <h2>Scalable</h2>
            <img src=(ThemeData "icons/dowload.png") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>
 
           <div class="summary-box">
-           <h2>Speed</h2>
+           <h2>Reliable</h2>
            <img src=(ThemeData "icons/phone.png") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>
 
           <div class="summary-box">
-           <h2>Power</h2>
+           <h2>Elegant</h2>
            <img src=(ThemeData "icons/usb.png") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>

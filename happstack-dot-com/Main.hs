@@ -8,16 +8,19 @@ import Clckwrks.Server
 import Clckwrks.Media
 import Clckwrks.Media.PreProcess (mediaCmd)
 import qualified Data.ByteString.Char8 as C
-import Data.List (intercalate)
-import qualified Data.Map as Map
-import Data.Monoid (mappend)
-import Data.Text  (Text)
+import Data.List              (intercalate)
+import qualified Data.Map     as Map
+import Data.Monoid            (mappend)
+import Data.Text              (Text)
 import Data.Text.Lazy.Builder (Builder)
-import qualified Data.Text as Text
-import System.Environment (getArgs)
+import qualified Data.Text    as Text
+import Paths_clckwrks         (getDataFileName)
+import System.Environment     (getArgs)
+import System.FilePath        ((</>))
 import URL
 import Web.Routes.Happstack
-import qualified Theme.Blog as Blog
+import qualified Theme.Blog   as Blog
+
 
 #ifdef PLUGINS
 import Control.Monad.State (get)
@@ -26,25 +29,27 @@ import System.Plugins.Auto (PluginHandle, PluginConf(..), defaultPluginConf, ini
 import PageMapper
 #endif
 
-clckwrksConfig :: ClckwrksConfig SiteURL
-clckwrksConfig = ClckwrksConfig
-      { clckHostname     = "localhost"
-      , clckPort         = 8000
-      , clckURL          = C
-      , clckJQueryPath   = "/usr/share/javascript/jquery/"
-      , clckJQueryUIPath = "/usr/share/javascript/jquery-ui/"
-      , clckJSTreePath   = "../jstree/"
-      , clckJSON2Path    = "../json2/"
-      , clckThemeDir     = "../clckwrks-theme-happstack/"
-      , clckPluginDir    = [("media", "../../clckwrks/clckwrks-plugin-media/")]
-      , clckStaticDir    = "../static"
+clckwrksConfig :: IO (ClckwrksConfig SiteURL)
+clckwrksConfig = 
+    do staticDir  <- getDataFileName "static"
+       return $ ClckwrksConfig
+                  { clckHostname     = "localhost"
+                  , clckPort         = 8000
+                  , clckURL          = C
+                  , clckJQueryPath   = "/usr/share/javascript/jquery/"
+                  , clckJQueryUIPath = "/usr/share/javascript/jquery-ui/"
+                  , clckJSTreePath   = "../jstree/"
+                  , clckJSON2Path    = "../json2/"
+                  , clckThemeDir     = "../clckwrks-theme-happstack/"
+                  , clckPluginDir    = [("media", "../../clckwrks/clckwrks-plugin-media/")]
+                  , clckStaticDir    = staticDir
 #ifdef PLUGINS
-      , clckPageHandler  = undefined
+                  , clckPageHandler  = undefined
 #else
-      , clckPageHandler  = staticPageHandler
+                  , clckPageHandler  = staticPageHandler
 #endif
-      , clckBlogHandler  = staticBlogHandler
-      }
+                  , clckBlogHandler  = staticBlogHandler
+                  }
 
 -- * SitePlus
 
@@ -119,6 +124,22 @@ initPlugins =
        dm <- nestURL C $ defaultAdminMenu
        mapM_ addAdminMenu dm
 
+{-
+
+The Problem:
+
+withClckwrks, withMediaConfig, etc, allocate resources and create State types which are needed in order to run clcwrks and other plugins. 
+
+but, we have further plugin initialization that needs to happen, like registering PreProcessor callbacks.
+
+And, those extra initializations might need to know how to create URLs. 
+
+but, we don't know how to show those urls until we call mkSitePlus -- which requires us to pass in mediaConf.
+
+
+
+-}
+
 clckwrks :: ClckwrksConfig SiteURL -> IO ()
 clckwrks cc' =
     do args <- getArgs
@@ -134,6 +155,31 @@ clckwrks cc' =
                  do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
                     let sitePlus' = fmap (evalClckT (siteShowURL sitePlus) clckState') sitePlus
                     simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
+
+{-
+-- clckwrks_ :: ClckwrksConfig SiteURL -> (IO (Site SiteURL (ClckT SiteURL (ServerPartT IO) Response) -> IO ())) -> IO ()
+clckwrks_ cc' f =
+    do args <- getArgs
+       let cc = case args of
+                  [] -> cc'
+                  (h:_) -> cc' { clckHostname = h }
+       withClckwrks cc $ \clckState ->
+           doMedia $ \site ->
+--           withMediaConfig Nothing "_uploads" $ \mediaConf ->
+               let -- site     = mkSite (clckPageHandler cc) clckState mediaConf
+--                   site     = mkSite2 cc mediaConf
+                   sitePlus = mkSitePlus (Text.pack $ clckHostname cc) (clckPort cc) Text.empty site
+               in 
+                 do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
+                    let sitePlus' = fmap (evalClckT (siteShowURL sitePlus) clckState') sitePlus
+                    simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
+    where 
+      doMedia cont = 
+          withMediaConfig Nothing "_uplod" $ \mediaConfig ->
+              let site     = mkSite2 cc mediaConf
+              in cont site
+                 
+-}
 
 route :: Happstack m => ClckwrksConfig SiteURL -> SitePlus SiteURL (m Response) -> m Response
 route cc sitePlus =
@@ -201,7 +247,8 @@ main :: IO ()
 main = 
   do ph <- initPlugins 
      putStrLn "Dynamic Server Started."
-     clckwrks (clckwrksConfig { clckPageHandler = dynamicPageHandler ph })
+     cc <- clckwrksConfig
+     clckwrks (cc { clckPageHandler = dynamicPageHandler ph })
 
 dynamicPageHandler :: PluginHandle -> Clck ClckURL Response
 dynamicPageHandler ph =
@@ -216,7 +263,8 @@ dynamicPageHandler ph =
 main :: IO ()
 main = 
   do putStrLn "Static Server Started."
-     clckwrks clckwrksConfig
+     cc <- clckwrksConfig
+     clckwrks cc
 
 staticPageHandler :: Clck ClckURL Response
 staticPageHandler = toResponse <$> unXMLGenT pageMapper

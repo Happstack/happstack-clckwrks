@@ -11,7 +11,7 @@ page =
        template (unpack ttl) () $
            <%>
             <div id="page-content">
-             <h1><% getPageTitle %></h1>
+             <h1 class="page-title"><% getPageTitle %></h1>
              <% getPageContent %>
             </div>
            </%>
