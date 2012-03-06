@@ -24,7 +24,7 @@ Executable happstack-server
         base < 5,
         bytestring == 0.9.*,
         clckwrks,
---        clckwrks-plugin-media,
+        clckwrks-plugin-media,
         containers == 0.4.*,
         mtl == 2.0.*,
         text,
