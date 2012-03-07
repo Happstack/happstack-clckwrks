@@ -20,6 +20,7 @@ Library
                        Theme.Home,
                        Theme.Page,
                        Theme.Template
+                       Paths_clckwrks_theme_happstack
 
   Build-depends:
         base          < 5,

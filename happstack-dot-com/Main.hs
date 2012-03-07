@@ -1,27 +1,29 @@
 {-# LANGUAGE CPP, RankNTypes, RecordWildCards, OverloadedStrings #-}
 module Main where
 
-import Control.Monad.State (evalStateT, get, modify)
+import Control.Monad.State      (evalStateT, get, modify)
 import Clckwrks
-import Clckwrks.Admin.Template (defaultAdminMenu)
+import Clckwrks.Admin.Template  (defaultAdminMenu)
 import Clckwrks.Server
 import Clckwrks.Media
 import Clckwrks.Media.PreProcess (mediaCmd)
 import qualified Data.ByteString.Char8 as C
-import Data.List              (intercalate)
-import qualified Data.Map     as Map
-import Data.Monoid            (mappend)
-import Data.Text              (Text)
-import Data.Text.Lazy.Builder (Builder)
-import qualified Data.Text    as Text
-import Paths_clckwrks         (getDataFileName)
-import System.Environment     (getArgs)
-import System.FilePath        ((</>))
+import Data.List                 (intercalate)
+import qualified Data.Map        as Map
+import Data.Monoid               (mappend)
+import Data.Text                 (Text)
+import Data.Text.Lazy.Builder    (Builder)
+import qualified Data.Text                      as Text
+import qualified Paths_clckwrks                 as Clckwrks
+import qualified Paths_clckwrks_theme_happstack as Theme
+import qualified Paths_clckwrks_plugin_media    as Media
+import System.Console.GetOpt     
+import System.Environment        (getArgs)
+import System.Exit               (exitFailure, exitSuccess)
+import System.FilePath           ((</>))
 import URL
-import Web.Routes.Happstack
-import qualified Theme.Blog   as Blog
-
-
+import Web.Routes.Happstack      ()
+import qualified Theme.Blog      as Blog
 #ifdef PLUGINS
 import Control.Monad.State (get)
 import System.Plugins.Auto (PluginHandle, PluginConf(..), defaultPluginConf, initPlugins, withMonadIOFile)
@@ -29,9 +31,70 @@ import System.Plugins.Auto (PluginHandle, PluginConf(..), defaultPluginConf, ini
 import PageMapper
 #endif
 
+------------------------------------------------------------------------------
+-- Command line options
+------------------------------------------------------------------------------
+
+-- | command-line Flags
+data Flag
+    = ModifyConfig (forall url. ClckwrksConfig url -> ClckwrksConfig url)
+    | Help
+    | Version
+
+-- | Flag selectors
+isHelp, isVersion :: Flag -> Bool
+isHelp    flag = case flag of Help    -> True; _ -> False
+isVersion flag = case flag of Version -> True; _ -> False
+
+-- | Command line options.
+clckwrksOpts :: [OptDescr Flag]
+clckwrksOpts = 
+    [ -- Option [] ["version"]       (NoArg Version)                 "Display version information" 
+      Option [] ["help"]          (NoArg Help)                    "Display this help message" 
+    , Option [] ["http-port"]     (ReqArg setPort "port")         "Port to bind http server"
+    , Option [] ["hostname"]      (ReqArg setHostname "hostname") "Server hostename"
+    , Option [] ["jquery-path"]   (ReqArg setJQueryPath "path")   "path to jquery directory"
+    , Option [] ["jqueryui-path"] (ReqArg setJQueryPath "path")   "path to jqueryui directory"
+    , Option [] ["jstree-path"]   (ReqArg setJSTreePath "path")   "path to jstree directory"
+    , Option [] ["json2-path"]    (ReqArg setJSON2Path  "path")   "path to json2 directory"
+    , Option [] ["theme-path"]    (ReqArg setThemeDir   "path")   "path to theme directory"
+    ]
+    where
+      setPort         str = ModifyConfig $ \c -> c { clckPort         = read str }
+      setHostname     str = ModifyConfig $ \c -> c { clckHostname     = str      }
+      setJQueryPath   str = ModifyConfig $ \c -> c { clckJQueryPath   = str      }
+      setJQueryUIPath str = ModifyConfig $ \c -> c { clckJQueryUIPath = str      }
+      setJSTreePath   str = ModifyConfig $ \c -> c { clckJSTreePath   = str      }
+      setJSON2Path    str = ModifyConfig $ \c -> c { clckJSON2Path    = str      }
+      setThemeDir     str = ModifyConfig $ \c -> c { clckThemeDir     = str      }
+
+-- | Parse the command line arguments into a list of flags. Exits with usage
+-- message, in case of failure.
+parseArgs :: [OptDescr Flag] -> [String] -> IO (ClckwrksConfig url -> ClckwrksConfig url)
+parseArgs opts args = 
+    case getOpt Permute opts args of
+      (flags,_,[]) -> 
+          if any isHelp flags 
+          then do putStr (helpMessage opts)
+                  exitSuccess
+          else do return $ foldr (.) id [f | (ModifyConfig f) <- flags ]
+      (_,_,errs)   ->
+          do putStr ("Failure while parsing command line:\n"++unlines errs)
+             putStr (helpMessage opts)
+             exitFailure
+
+-- | A simple usage message listing all flags possible.
+helpMessage :: [OptDescr Flag] -> String
+helpMessage opts =
+    usageInfo header opts
+    where 
+      header = "Usage: clckwrks [OPTION...]"
+
 clckwrksConfig :: IO (ClckwrksConfig SiteURL)
-clckwrksConfig = 
-    do staticDir  <- getDataFileName "static"
+clckwrksConfig =
+    do staticDir  <- Clckwrks.getDataFileName "static"
+       themeDir   <- Theme.getDataDir
+       mediaDir   <- Media.getDataDir
        return $ ClckwrksConfig
                   { clckHostname     = "localhost"
                   , clckPort         = 8000
@@ -40,8 +103,8 @@ clckwrksConfig =
                   , clckJQueryUIPath = "/usr/share/javascript/jquery-ui/"
                   , clckJSTreePath   = "../jstree/"
                   , clckJSON2Path    = "../json2/"
-                  , clckThemeDir     = "../clckwrks-theme-happstack/"
-                  , clckPluginDir    = [("media", "../../clckwrks/clckwrks-plugin-media/")]
+                  , clckThemeDir     = themeDir
+                  , clckPluginDir    = [("media", mediaDir)]
                   , clckStaticDir    = staticDir
 #ifdef PLUGINS
                   , clckPageHandler  = undefined
@@ -51,9 +114,19 @@ clckwrksConfig =
                   , clckBlogHandler  = staticBlogHandler
                   }
 
--- * SitePlus
+getClckwrksConfig :: [OptDescr Flag]
+                  -> IO (ClckwrksConfig SiteURL)
+getClckwrksConfig opts =
+    do args <- getArgs
+       f    <- parseArgs opts args
+       cc   <- clckwrksConfig
+       return (f cc)
 
-data SitePlus url a = SitePlus 
+------------------------------------------------------------------------------
+-- SitePlus
+------------------------------------------------------------------------------
+
+data SitePlus url a = SitePlus
     { siteSite    :: Site url a
     , siteDomain  :: Text
     , sitePort    :: Int
@@ -72,7 +145,7 @@ mkSitePlus :: Text
            -> Site url a
            -> SitePlus url a
 mkSitePlus domain port approot site =
-    SitePlus { siteSite          = site 
+    SitePlus { siteSite          = site
              , siteDomain        = domain
              , sitePort          = port
              , siteAppRoot       = approot
@@ -84,7 +157,7 @@ mkSitePlus domain port approot site =
       showFn url qs =
         let (pieces, qs') = formatPathSegments site url
         in approot `mappend` (encodePathInfo pieces (qs ++ qs'))
-      prefix = Text.concat $ [ Text.pack "http://" 
+      prefix = Text.concat $ [ Text.pack "http://"
                              , domain
                              ] ++
                              (if port == 80
@@ -103,7 +176,7 @@ runSitePlus_ sitePlus =
               (Right sp)   -> Right <$> (localRq (const $ rq { rqPaths = [] }) sp)
         where
           escapeSlash :: String -> String
-          escapeSlash [] = []
+          escapeSlash []       = []
           escapeSlash ('/':cs) = "%2F" ++ escapeSlash cs
           escapeSlash (c:cs)   = c : escapeSlash cs
 
@@ -114,6 +187,10 @@ runSitePlus sitePlus =
          (Left _)  -> mzero
          (Right a) -> return a
 
+------------------------------------------------------------------------------
+-- Plugins
+------------------------------------------------------------------------------
+
 initPlugins :: ClckT SiteURL IO ()
 initPlugins =
     do showFn <- askRouteFn
@@ -123,6 +200,11 @@ initPlugins =
        nestURL M $ addMediaAdminMenu
        dm <- nestURL C $ defaultAdminMenu
        mapM_ addAdminMenu dm
+
+
+------------------------------------------------------------------------------
+-- Server
+------------------------------------------------------------------------------
 
 {-
 
@@ -135,8 +217,6 @@ but, we have further plugin initialization that needs to happen, like registerin
 And, those extra initializations might need to know how to create URLs. 
 
 but, we don't know how to show those urls until we call mkSitePlus -- which requires us to pass in mediaConf.
-
-
 
 -}
 
@@ -184,7 +264,7 @@ clckwrks_ cc' f =
 route :: Happstack m => ClckwrksConfig SiteURL -> SitePlus SiteURL (m Response) -> m Response
 route cc sitePlus =
     do decodeBody (defaultBodyPolicy "/tmp/" (10 * 10^6)  (1 * 10^6)  (1 * 10^6))
-       msum $ 
+       msum $
             [ jsHandlers cc
             , dir "favicon.ico" $ notFound (toResponse ())
             , dir "static"      $ serveDirectory DisableBrowsing [] (clckStaticDir cc)
@@ -221,7 +301,7 @@ routeSite :: ClckwrksConfig u -> MediaConfig -> SiteURL -> Clck SiteURL Response
 routeSite cc mediaConfig url =
     do case url of
         (C clckURL)  -> nestURL C $ routeClck cc clckURL
-        (M mediaURL) -> 
+        (M mediaURL) ->
             do showFn <- askRouteFn
                -- FIXME: it is a bit silly that we wait this  long to set the mediaClckURL
                -- would be better to do it before we forkIO on simpleHTTP
@@ -241,13 +321,12 @@ mkSite2 cc mediaConfig = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI route'
       route' f url =
           routeSite cc mediaConfig url
 
-
 #ifdef PLUGINS
 main :: IO ()
-main = 
-  do ph <- initPlugins 
+main =
+  do ph <- initPlugins
      putStrLn "Dynamic Server Started."
-     cc <- clckwrksConfig
+     cc <- getClckwrksConfig clckwrksOpts
      clckwrks (cc { clckPageHandler = dynamicPageHandler ph })
 
 dynamicPageHandler :: PluginHandle -> Clck ClckURL Response
@@ -261,9 +340,9 @@ dynamicPageHandler ph =
       internalServerError $ toResponse $ unlines errs
 #else
 main :: IO ()
-main = 
+main =
   do putStrLn "Static Server Started."
-     cc <- clckwrksConfig
+     cc <- getClckwrksConfig clckwrksOpts
      clckwrks cc
 
 staticPageHandler :: Clck ClckURL Response
