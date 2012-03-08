@@ -92,7 +92,7 @@ helpMessage opts =
 
 clckwrksConfig :: IO (ClckwrksConfig SiteURL)
 clckwrksConfig =
-    do staticDir  <- Clckwrks.getDataFileName "static"
+    do clckDir    <- Clckwrks.getDataDir
        themeDir   <- Theme.getDataDir
        mediaDir   <- Media.getDataDir
        return $ ClckwrksConfig
@@ -101,11 +101,11 @@ clckwrksConfig =
                   , clckURL          = C
                   , clckJQueryPath   = "/usr/share/javascript/jquery/"
                   , clckJQueryUIPath = "/usr/share/javascript/jquery-ui/"
-                  , clckJSTreePath   = "../jstree/"
-                  , clckJSON2Path    = "../json2/"
+                  , clckJSTreePath   = clckDir </> "jstree"
+                  , clckJSON2Path    = clckDir </> "json2"
                   , clckThemeDir     = themeDir
                   , clckPluginDir    = [("media", mediaDir)]
-                  , clckStaticDir    = staticDir
+                  , clckStaticDir    = clckDir </> "static"
 #ifdef PLUGINS
                   , clckPageHandler  = undefined
 #else
