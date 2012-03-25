@@ -48,9 +48,9 @@ isVersion flag = case flag of Version -> True; _ -> False
 
 -- | Command line options.
 clckwrksOpts :: [OptDescr Flag]
-clckwrksOpts = 
+clckwrksOpts =
     [ -- Option [] ["version"]       (NoArg Version)                 "Display version information" 
-      Option [] ["help"]          (NoArg Help)                    "Display this help message" 
+      Option [] ["help"]          (NoArg Help)                    "Display this help message"
     , Option [] ["http-port"]     (ReqArg setPort "port")         "Port to bind http server"
     , Option [] ["hostname"]      (ReqArg setHostname "hostname") "Server hostename"
     , Option [] ["jquery-path"]   (ReqArg setJQueryPath "path")   "path to jquery directory"
@@ -71,10 +71,10 @@ clckwrksOpts =
 -- | Parse the command line arguments into a list of flags. Exits with usage
 -- message, in case of failure.
 parseArgs :: [OptDescr Flag] -> [String] -> IO (ClckwrksConfig url -> ClckwrksConfig url)
-parseArgs opts args = 
+parseArgs opts args =
     case getOpt Permute opts args of
-      (flags,_,[]) -> 
-          if any isHelp flags 
+      (flags,_,[]) ->
+          if any isHelp flags
           then do putStr (helpMessage opts)
                   exitSuccess
           else do return $ foldr (.) id [f | (ModifyConfig f) <- flags ]
@@ -87,7 +87,7 @@ parseArgs opts args =
 helpMessage :: [OptDescr Flag] -> String
 helpMessage opts =
     usageInfo header opts
-    where 
+    where
       header = "Usage: clckwrks [OPTION...]"
 
 clckwrksConfig :: IO (ClckwrksConfig SiteURL)

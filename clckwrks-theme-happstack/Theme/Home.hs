@@ -32,19 +32,19 @@ page =
          <div class="summary-boxes">
           <div class="summary-box">
            <h2>Scalable</h2>
-           <img src=(ThemeData "icons/dowload.png") />
+           <img src=(ThemeData "icons/scalable.jpg") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>
 
           <div class="summary-box">
            <h2>Reliable</h2>
-           <img src=(ThemeData "icons/phone.png") />
+           <img src=(ThemeData "icons/reliable.jpg") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>
 
           <div class="summary-box">
            <h2>Elegant</h2>
-           <img src=(ThemeData "icons/usb.png") />
+           <img src=(ThemeData "icons/elegant.jpg") />
            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut tortor non augue tincidunt iaculis. Cras ac diam rhoncus nibh commodo iaculis vel sed ligula. Curabitur fringilla tortor sed massa consequat convallis. Maecenas consectetur tincidunt porttitor. Aenean quis posuere augue.</p>
           </div>
          </div>
