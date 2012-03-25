@@ -248,17 +248,17 @@ Combinators
 
 Combinator based DSLs are great because of their expressiveness and extensibility. Accordingly, we strongly prefer combinators when possible.
 
-Many web frameworks (Haskell and non-Haskell alike) define some sort of special syntax for routing urls to handlers. These route mappings are often represented as a string with some special notation for variable captures. In some cases the string is parsed at runtime, in other cases it is parsed at compile time by some preprocessor.
+For example, many web frameworks (Haskell and non-Haskell alike) define some sort of special syntax for routing urls to handlers. These route mappings are often represented as a string with some special notation for variable captures. In some cases the string is parsed at runtime, in other cases it is parsed at compile time by some preprocessor.
 
-The advantage of that method is that it can provide a very concise and readable syntax for parsing simple routes. Additionally, a compile time preprocessor can perform routing optimizations and checks for errors. But there are also several drawbacks. Is the string as parsed at runtime, then errors won't be caught until runtime.
+The advantage of that method is that it can provide a very concise and readable syntax for parsing simple routes. Additionally, a compile time preprocessor can perform routing optimizations and checks for errors. But there are also several drawbacks. For example, if the string as parsed at runtime, then errors won't be caught until runtime.
 
 More importantly, though, is that such systems tend to lack expressiveness and extensibility. To the degree that extensibility is permitted, it often requires that the developer use a second, completely different parsing system.
 
-In Happstack, we use boomerang to provide a routing DSL that is easy to read, and easy to extend. For example, we could parse route like:
+In Happstack, we use boomerang to provide a routing DSL that is easy to read, and easy to extend. For example, we could parse a route like:
 
 >    "/article/123"
 
-Using a combinator like:
+using a combinator like:
 
 > "article" </> int
 
@@ -273,7 +273,7 @@ and rewrite the code to:
 
 More information on boomerang and web-routes can be found [here](http://happstack.com/docs/crashcourse/WebRoutes.html#web-routes-boomerang).
 
-Happstack 7 has some simple, dynamic routing combinators, such as a `dir` and `path`. In Happstack 8 we will look at bringing more powerful `boomerang` style combinators to dynamic routing as well.
+Happstack 7 has some simple, path segment oriented routing combinators, such as a `dir` and `path`. In Happstack 8 we will look at bringing more powerful `boomerang` style combinators to the path segment oriented routing combinators as well.
 
 Template Haskell
 ----------------
@@ -292,7 +292,7 @@ library.
 
 `jmacro` allows developers to write javascript code using the syntax they are already familiar with. Creating a DSL using combinators would hurt far more than it helps. Developers would spend a lot of time thinking about what they want to write in javascript, and then trying to figure out how to translate that into combinators, etc.
 
-Instead, `jmacro` allows the developers to stick with the familiar syntax they already know, while still being able to leverage code generation and safely splice Haskell types into javascript code. As an added benefit, `jmacro` also provides compile-time syntax checker, the ability to generate unique names for global variables/functions, and an experimental type checker.
+Instead, `jmacro` allows the developers to stick with the familiar syntax they already know, while still being able to leverage code generation and safely splice Haskell types into javascript code. As an added benefit, `jmacro` also provides compile-time syntax checking, the ability to generate unique names for global variables/functions, and an experimental type checker.
 
 
 Performance and Scalability
@@ -300,20 +300,20 @@ Performance and Scalability
 
 The Glourious Haskell Compiler (GHC), produces relatively fast, compiled code. As shown in [Computer Language Benchmarks Game](http://shootout.alioth.debian.org/u32/which-programming-languages-are-fastest.php), compiled Haskell code is only 2-3 times slower than C and Fortran, and 10x faster than languages like PHP, Ruby, and Python.
 
-The GHC runtime system (RTS) provides exceptionally fast and scalable concurrency. Haskell applications are able to easily scale to millions of threads and have very fast interthread communication. Haskell tops the list in [this benchmark](http://shootout.alioth.debian.org/u32/benchmark.php?test=threadring&lang=all).
+The GHC runtime system (RTS) provides exceptionally fast and scalable concurrency. Haskell applications are able to easily scale to millions of threads and have very fast interthread communication. Haskell tops the list in [this threading benchmark](http://shootout.alioth.debian.org/u32/benchmark.php?test=threadring&lang=all).
 
-The GHC portable I/O event manager was designed from the ground up f when or supporting high-concurrency network servers, supporting millions of concurrent network connections with millions of active timeouts.
+The GHC portable I/O event manager was designed from the ground up to support high-concurrency network servers, supporting millions of concurrent network connections with millions of active timeouts. It is based on modern event notification facilities like epoll instead of select.
 
 Haskell's commitment to purity and static typing has allowed for the development of easy to use concurrency and communication mechanisms, such as [software transactional memory](http://www.haskell.org/haskellwiki/Software_transactional_memory) (STM). STM allows for composable and modular conconcurrent code, ensuring that deadlocks do not arise -- something that most other concurrency mechanisms can not guarantee.
 
-`happstack-server` is already significantly faster than popular frameworks written on Python and Ruby, able to serve tens of thousands of requests per second. In Happstack 8 we expecting to get a 4 fold increase in speed, making `happstack-server` one of the faster HTTP servers in the world.
+`happstack-server` is already significantly faster than popular frameworks written on Python and Ruby, able to serve tens of thousands of requests per second. In Happstack 8 we expecting to get a 4 fold increase in speed, making `happstack-server` one of the fastest HTTP servers in the world.
 
 Maintainable
 ============
 
 Haskell code tends to have good long term maintainablity. There are a few contributing factors.
 
- - Haskell is a fairly expressive language, allow ideas to be expressed clearly and with fewer tokens. This makes it easier to read and understand code. As the project grows, this becomes especially important when new developers are added to the project, or when developers have to visit old code.
+ - Haskell is a fairly expressive language, allow ideas to be expressed clearly and with fewer tokens. This makes it easier to read and understand code. This readability becomes especially important when new developers are added to the project, or when developers have to visit old code.
 
 - Haskell is a rather flat language consisting mostly of functions and algebraic data types. Because many functions are pure, there is no global environment or state to worry about. This makes it easy to reason about a function's behaviour in isolation. Haskell code tends to get large and unweildy at a much slower rate than many other languages.
 
@@ -349,7 +349,12 @@ While these features are interesting in themselves, what really makes it `acid-s
 
 As a side note, `acid-state` is currently only ~2000 lines including comments, imports, and blank lines.
 
+Off-the-shelf libraries
+=======================
+
+We are currently laying the ground work to be able to offer a selection of off the shelf components making it easy to add authentication, user accounts, payment process, blogs, and more to your website. Stay tuned for more details soon!
+
 Conclusion
 ==========
 
-Happstack is continuing to innovate and evolve. During Happstack 8 development we will be looking at many of the core technologies in Happstack and figuring out how to bring them more in line with our ideals. This will make Happstack even faster, more robust, and easier to use. As part of this process, we will doing a blog series explaining the work we are doing. This will force us to justify why the design decisions are in harmony with our philosophy. And if our design is not, then we will have to change it until it is. We will also compare our solutions to solutions offered by other frameworks and show why we think are solution fits betters with our goals. In doing that, we hope to expose weaknesses and oversights of our own designs that we can go back and address. We also hope it will encourage reader feedback. And we also hope it will make it easier to contribute to Happstack by providing documentation explaining why things are they way there are.
+Happstack is continuing to innovate and evolve. During Happstack 8 development we will be looking at many of the core technologies in Happstack and figuring out how to bring them more in line with our ideals. This will make Happstack even faster, more robust, and easier to use. As part of this process, we will doing a blog series talking about what we are currently working on. This will force us to justify why the design decisions are in harmony with our philosophy. And if our design is not, then we will have to change it until it is. We will also compare our solutions to solutions offered by other frameworks and show why we think are solution fits better with our ideals. In doing that, we hope to expose weaknesses and oversights of our own designs that we can go back and address. We also hope it will encourage reader feedback. And we also hope it will make it easier to contribute to Happstack by providing documentation explaining why things are they way there are.
