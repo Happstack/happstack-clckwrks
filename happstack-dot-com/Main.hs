@@ -15,9 +15,11 @@ import Data.Text                 (Text)
 import Data.Text.Lazy.Builder    (Builder)
 import qualified Data.Text                      as Text
 import qualified Paths_clckwrks                 as Clckwrks
+#ifdef CABAL
 import qualified Paths_clckwrks_theme_happstack as Theme
+#endif
 import qualified Paths_clckwrks_plugin_media    as Media
-import System.Console.GetOpt     
+import System.Console.GetOpt
 import System.Environment        (getArgs)
 import System.Exit               (exitFailure, exitSuccess)
 import System.FilePath           ((</>))
@@ -49,7 +51,7 @@ isVersion flag = case flag of Version -> True; _ -> False
 -- | Command line options.
 clckwrksOpts :: [OptDescr Flag]
 clckwrksOpts =
-    [ -- Option [] ["version"]       (NoArg Version)                 "Display version information" 
+    [ -- Option [] ["version"]       (NoArg Version)                 "Display version information"
       Option [] ["help"]          (NoArg Help)                    "Display this help message"
     , Option [] ["http-port"]     (ReqArg setPort "port")         "Port to bind http server"
     , Option [] ["hostname"]      (ReqArg setHostname "hostname") "Server hostename"
@@ -93,7 +95,11 @@ helpMessage opts =
 clckwrksConfig :: IO (ClckwrksConfig SiteURL)
 clckwrksConfig =
     do clckDir    <- Clckwrks.getDataDir
+#ifdef CABAL
        themeDir   <- Theme.getDataDir
+#else
+       let themeDir = "../clckwrks-theme-happstack/"
+#endif
        mediaDir   <- Media.getDataDir
        return $ ClckwrksConfig
                   { clckHostname     = "localhost"
@@ -210,11 +216,11 @@ initPlugins =
 
 The Problem:
 
-withClckwrks, withMediaConfig, etc, allocate resources and create State types which are needed in order to run clcwrks and other plugins. 
+withClckwrks, withMediaConfig, etc, allocate resources and create State types which are needed in order to run clcwrks and other plugins.
 
 but, we have further plugin initialization that needs to happen, like registering PreProcessor callbacks.
 
-And, those extra initializations might need to know how to create URLs. 
+And, those extra initializations might need to know how to create URLs.
 
 but, we don't know how to show those urls until we call mkSitePlus -- which requires us to pass in mediaConf.
 
@@ -231,7 +237,7 @@ clckwrks cc' =
                let -- site     = mkSite (clckPageHandler cc) clckState mediaConf
                    site     = mkSite2 cc mediaConf
                    sitePlus = mkSitePlus (Text.pack $ clckHostname cc) (clckPort cc) Text.empty site
-               in 
+               in
                  do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
                     let sitePlus' = fmap (evalClckT (siteShowURL sitePlus) clckState') sitePlus
                     simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
@@ -249,16 +255,16 @@ clckwrks_ cc' f =
                let -- site     = mkSite (clckPageHandler cc) clckState mediaConf
 --                   site     = mkSite2 cc mediaConf
                    sitePlus = mkSitePlus (Text.pack $ clckHostname cc) (clckPort cc) Text.empty site
-               in 
+               in
                  do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
                     let sitePlus' = fmap (evalClckT (siteShowURL sitePlus) clckState') sitePlus
                     simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
-    where 
-      doMedia cont = 
+    where
+      doMedia cont =
           withMediaConfig Nothing "_uplod" $ \mediaConfig ->
               let site     = mkSite2 cc mediaConf
               in cont site
-                 
+
 -}
 
 route :: Happstack m => ClckwrksConfig SiteURL -> SitePlus SiteURL (m Response) -> m Response
@@ -287,12 +293,12 @@ So, the reason it is hard to get the monad into the callback is because we shoul
 
 Well, that is not actually a problem. The monad is really an environment in which a computation can run. And we can create that environment multiple ways.
 
-The issue with the MediaT monad is that it includes the MediaURL. And so to work with that, we need to specify how to turn a MediaURL into a SiteURL. 
+The issue with the MediaT monad is that it includes the MediaURL. And so to work with that, we need to specify how to turn a MediaURL into a SiteURL.
 
 That is something we normally do in routeSite via 'nestURL M'. But that means we have to repeat ourselves.
 
 we could have a function like withMediaT to contruct a temporary MediaT monad to be used when registering the callback. Though there is a danger there, because some of the information use to register the callback might become stale.
-
+p
 In theory, we would like to do some stuff in the ClckT monad before start listening to incoming requests. However, to run the ClckT monad we need to provide the show function. Normally that is done transparently via implSite / site / etc.
 
 Though it seems the information we need comes from Site not implSite.
@@ -306,7 +312,7 @@ routeSite cc mediaConfig url =
                -- FIXME: it is a bit silly that we wait this  long to set the mediaClckURL
                -- would be better to do it before we forkIO on simpleHTTP
                nestURL M $ runMediaT (mediaConfig { mediaClckURL = (showFn . C) })  $ routeMedia mediaURL
-{-      
+{-
 mkSite :: ClckwrksConfig u -> ClckState -> MediaConfig -> Site SiteURL (ServerPart Response)
 mkSite cc clckState media = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI route'
     where
