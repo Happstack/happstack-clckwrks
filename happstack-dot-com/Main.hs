@@ -66,6 +66,7 @@ clckwrksOpts def =
     , Option [] ["static"]        (ReqArg noop "ignored")         "unused"
     , Option [] ["logs"]          (ReqArg noop "ignored")         "unimplemented"
     , Option [] ["log-mode"]      (ReqArg noop "ignored")         "unimplemented"
+    , Option [] ["enable-analytics"] (ReqArg noop "ignored")      "unimplemented"
     ]
     where
       noop            _   = ModifyConfig $ id
