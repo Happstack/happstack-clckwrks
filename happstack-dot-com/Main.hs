@@ -50,10 +50,8 @@ isHelp    flag = case flag of Help    -> True; _ -> False
 isVersion flag = case flag of Version -> True; _ -> False
 
 -- | Command line options.
-clckwrksOpts :: IO [OptDescr Flag]
-clckwrksOpts =
-    clckwrksConfig >>= \ def ->
-    return $
+clckwrksOpts :: ClckwrksConfig SiteURL -> [OptDescr Flag]
+clckwrksOpts def =
     [ -- Option [] ["version"]       (NoArg Version)                 "Display version information"
       Option [] ["help"]          (NoArg Help)                    "Display this help message"
     , Option [] ["http-port"]     (ReqArg setPort "port")         ("Port to bind http server, default: " ++ show (clckPort def))
@@ -132,11 +130,11 @@ clckwrksConfig =
                   }
 
 getClckwrksConfig :: [OptDescr Flag]
+                  -> ClckwrksConfig SiteURL
                   -> IO (ClckwrksConfig SiteURL)
-getClckwrksConfig opts =
+getClckwrksConfig opts cc =
     do args <- getArgs
        f    <- parseArgs opts args
-       cc   <- clckwrksConfig
        return (f cc)
 
 ------------------------------------------------------------------------------
@@ -343,7 +341,8 @@ main :: IO ()
 main =
   do ph <- initPlugins
      putStrLn "Dynamic Server Started."
-     cc <- clckwrksOpts >>= getClckwrksConfig
+     defCC <- clckwrksConfig
+     cc    <- getClckwrksConfig (clckwrksOpts defCC) defCC
      clckwrks (cc { clckPageHandler = dynamicPageHandler ph })
 
 dynamicPageHandler :: PluginHandle -> Clck ClckURL Response
@@ -359,7 +358,8 @@ dynamicPageHandler ph =
 main :: IO ()
 main =
   do putStrLn "Static Server Started."
-     cc <- clckwrksOpts >>= getClckwrksConfig
+     defCC <- clckwrksConfig
+     cc    <- getClckwrksConfig (clckwrksOpts defCC) defCC
      clckwrks cc
 
 staticPageHandler :: Clck ClckURL Response
