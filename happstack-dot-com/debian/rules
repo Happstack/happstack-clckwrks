@@ -10,4 +10,4 @@ binary-fixup/happstack-dot-com-server::
 	install -m 755 -s -D dist-ghc/build/happstack-server/happstack-server debian/happstack-dot-com-server/usr/bin/happstack-dot-com-server || true
 
 makebuilddir::
-	SITENAME=happstack.com SERVERADMIN=partners@seereason.com PROXYPORT=9028 TESTINGPORT=8000 happstack-debianization-install
+	SITENAME=happstack.com HOSTNAME=seereason.com SERVERADMIN=partners@seereason.com PROXYPORT=9028 TESTINGPORT=8000 happstack-debianization-install

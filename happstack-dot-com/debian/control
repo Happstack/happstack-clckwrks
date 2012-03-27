@@ -41,7 +41,7 @@ Build-Depends: debhelper (>= 7.0),
                libghc-web-routes-th-dev (<= 0.22),
                libghc-web-routes-th-prof (>> 0.21),
                libghc-web-routes-th-prof (<= 0.22),
-               happstack-debianization
+               happstack-debianization (>= 0.12)
 Build-Depends-Indep: ghc-doc,
                      libghc-base-doc (<< 5) | ghc-doc,
                      libghc-bytestring-doc (>> 0.9) | ghc-doc,
@@ -72,11 +72,21 @@ Description: happstack.com server
 Package: happstack-dot-com-production
 Architecture: any
 Section: misc
-Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, happstack-dot-com-server
+Conflicts: happstack-dot-com-staging
+Replaces: happstack-dot-com-staging
 Description: happstack.com production installation
+
+Package: happstack-dot-com-staging
+Architecture: any
+Section: misc
+Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, happstack-dot-com-server
+Conflicts: happstack-dot-com-production
+Replaces: happstack-dot-com-production
+Description: happstack.com staging installation
 
 Package: happstack-dot-com-testing
 Architecture: any
 Section: misc
-Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, happstack-dot-com-server
 Description: happstack.com testing installation
