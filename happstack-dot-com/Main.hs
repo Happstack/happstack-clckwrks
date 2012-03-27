@@ -172,7 +172,7 @@ mkSitePlus domain port approot site =
     where
       showFn url qs =
         let (pieces, qs') = formatPathSegments site url
-        in approot `mappend` (encodePathInfo pieces (qs ++ qs'))
+        in prefix `mappend` (encodePathInfo pieces (qs ++ qs'))
       prefix = Text.concat $ [ Text.pack "http://"
                              , domain
                              ] ++
@@ -237,11 +237,8 @@ but, we don't know how to show those urls until we call mkSitePlus -- which requ
 -}
 
 clckwrks :: ClckwrksConfig SiteURL -> IO ()
-clckwrks cc' =
+clckwrks cc =
     do args <- getArgs
-       let cc = case args of
-                  [] -> cc'
-                  (h:_) -> cc' { clckHostname = h }
        withClckwrks cc $ \clckState ->
            withMediaConfig Nothing "_uploads" $ \mediaConf ->
                let -- site     = mkSite (clckPageHandler cc) clckState mediaConf
