@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+DEB_CABAL_PACKAGE = happstack-dot-com
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/hlibrary.mk
+
+build/happstack-dot-com-server:: build-ghc-stamp
+binary-fixup/happstack-dot-com-server::
+	install -m 755 -s -D dist-ghc/build/happstack-server/happstack-server debian/happstack-dot-com-server/usr/bin/happstack-dot-com-server || true
+
+makebuilddir::
+	SITENAME=happstack.com SERVERADMIN=partners@seereason.com PROXYPORT=9028 TESTINGPORT=8000 happstack-debianization-install
