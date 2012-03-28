@@ -284,8 +284,8 @@ route cc sitePlus =
             , dir "login"       $ seeOther ((siteShowURL sitePlus) (C $ Auth $ AuthURL A_Login) []) (toResponse ())
             , dir "admin"       $ seeOther ((siteShowURL sitePlus) (C $ Admin Console) []) (toResponse ())
             , dir "docs"         $ msum
-                      [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack-crashcourse"
-                      , serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack/7"
+                      [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack-crashcourse"
+                      , serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack/7"
                       ]
             , runSitePlus sitePlus
             ]
