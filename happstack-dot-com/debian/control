@@ -90,3 +90,11 @@ Architecture: any
 Section: misc
 Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, happstack-dot-com-server
 Description: happstack.com testing installation
+
+Package: happstack-dot-com-backups
+Architecture: any
+Section: misc
+Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, anacron
+Description: backup program for happstack-dot-com site
+  Install this somewhere other than where the server is running get
+  automated backups of the database.

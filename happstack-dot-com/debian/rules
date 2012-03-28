@@ -11,3 +11,6 @@ binary-fixup/happstack-dot-com-server::
 
 makebuilddir::
 	SITENAME=happstack.com HOSTNAME=seereason.com SERVERADMIN=partners@seereason.com PROXYPORT=9028 TESTINGPORT=8000 happstack-debianization-install
+
+binary-fixup/happstack-dot-com-backups::
+	install -Dps -m 755 dist-ghc/build/happstack-dot-com-backups/happstack-dot-com-backups debian/happstack-dot-com-backups/etc/cron.hourly/happstack-dot-com
