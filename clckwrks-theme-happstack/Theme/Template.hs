@@ -3,6 +3,7 @@
 module Theme.Template where
 
 import Clckwrks
+import Clckwrks.ProfileData.Acid (HasRole(..))
 import Data.String (IsString(..))
 import Data.Text (Text)
 import HSP.Google.Analytics (UACCT)
@@ -26,13 +27,27 @@ template title headers body =
       -- <% analyticsAsync (UACCT "UA-7111625-1") %>
      </head>
      <body>
-      <span id="logo">Happstack</span>
-      <% getMenu %>
+      <div class="page-menu">
+       <span id="logo">Happstack</span>
+       <div class="menu-inner-div">
+        <% getMenu %>
+       </div>
+      </div>
       <% body %>
 
     <div id="footer">
-     <div><a href=(Auth $ AuthURL A_Login)>login</a></div>
-     <div><a href=(Admin Console)>admin console</a></div>
+     <% do mu <- getUserId
+           case mu of
+             Nothing -> <% () %>
+             (Just uid) ->
+                 do r <- query (HasRole uid Administrator)
+                    if not r
+                      then <% () %>
+                      else <%>
+                            <div><a href=(Auth $ AuthURL A_Login)>login</a></div>
+                            <div><a href=(Admin Console)>admin console</a></div>
+                           </%>
+       %>
      <div id="copyright">Powered by Happstack. Copyright 2012, Jeremy Shaw</div>
     </div>
    </body>

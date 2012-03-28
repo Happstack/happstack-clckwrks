@@ -1,19 +1,23 @@
 Name:                clckwrks-theme-happstack
-Version:             0.1
+Version:             0.1.1
 Synopsis:            Theme for happstack.com
--- Description:         
+-- Description:
 Homepage:            http://www.clckwrks.com/
 License:             BSD3
 License-file:        LICENSE
 Author:              Jeremy Shaw
 Maintainer:          jeremy@n-heptane.com
--- Copyright:           
+-- Copyright:
 Category:            Clckwrks
 Build-type:          Simple
 Cabal-version:       >=1.2
 Data-Files:
         data/style.css
         data/seven-black.png
+        data/icons/7-icon.png
+        data/icons/8-icon.png
+        data/icons/philosophy-icon.png
+
 
 Library
   Exposed-modules:     Theme.Blog,
