@@ -73,8 +73,8 @@ Package: happstack-dot-com-production
 Architecture: any
 Section: misc
 Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, happstack-dot-com-server
-Conflicts: happstack-dot-com-staging
-Replaces: happstack-dot-com-staging
+Conflicts: happstack-dot-com-staging, happstackdotcom-production
+Replaces: happstack-dot-com-staging, happstackdotcom-production
 Description: happstack.com production installation
 
 Package: happstack-dot-com-staging

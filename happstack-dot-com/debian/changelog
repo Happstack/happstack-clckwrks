@@ -1,3 +1,10 @@
+haskell-happstack-dot-com (0.1.2) unstable; urgency=low
+
+  * Make happstack-dot-com-production conflict with and replace the old
+    server happstackdotcom-production.
+
+ -- David Fox <dsf@seereason.com>  Wed, 28 Mar 2012 14:55:42 -0700
+
 haskell-happstack-dot-com (0.1.1-2) unstable; urgency=low
 
   * Bump version to trump an upload.
