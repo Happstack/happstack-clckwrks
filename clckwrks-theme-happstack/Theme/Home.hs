@@ -31,9 +31,9 @@ page =
          </blockquote>
 
          <div class="summary-boxes">
-          <% summaryBox (PageId 5) "Happstack Philosophy" "icons/philosophy-icon.png" %>
-          <% summaryBox (PageId 6) "Happstack 7 Release Notes" "icons/7-icon.png" %>
-          <% summaryBox (PageId 7) "Happstack 8 Roadmap" "icons/8-icon.png" %>
+          <% summaryBox (PageId 5) "Happstack Philosophy" "philosophy-icon.png" %>
+          <% summaryBox (PageId 6) "Happstack 7 Release Notes" "7-icon.png" %>
+          <% summaryBox (PageId 7) "Happstack 8 Roadmap" "8-icon.png" %>
 
          </div>
 
