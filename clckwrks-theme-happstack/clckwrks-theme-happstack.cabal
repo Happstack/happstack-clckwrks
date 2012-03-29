@@ -14,9 +14,9 @@ Cabal-version:       >=1.2
 Data-Files:
         data/style.css
         data/seven-black.png
-        data/icons/7-icon.png
-        data/icons/8-icon.png
-        data/icons/philosophy-icon.png
+        data/7-icon.png
+        data/8-icon.png
+        data/philosophy-icon.png
 
 
 Library
