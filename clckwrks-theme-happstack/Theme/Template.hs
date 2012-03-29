@@ -48,7 +48,7 @@ template title headers body =
                             <div><a href=(Admin Console)>admin console</a></div>
                            </%>
        %>
-     <div id="copyright">Powered by Happstack. Copyright 2012, Jeremy Shaw</div>
+     <div id="copyright">Powered by Happstack. Copyright 2012, SeeReason Partners LLC</div>
     </div>
    </body>
   </html>

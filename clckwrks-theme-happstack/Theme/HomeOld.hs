@@ -73,7 +73,7 @@ page :: XMLGenT (Clck ClckURL) XML
     </div>
 
     <div id="footer">
-     <div id="copyright">Powered by Happstack. Copyright 2012, Jeremy Shaw</div>
+     <div id="copyright">Powered by Happstack. Copyright 2012, SeeReason Partners LLC</div>
     </div>
 
  </body>
