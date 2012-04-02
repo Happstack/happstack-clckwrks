@@ -6,7 +6,7 @@ import Clckwrks
 import Clckwrks.ProfileData.Acid (HasRole(..))
 import Data.String (IsString(..))
 import Data.Text (Text)
-import HSP.Google.Analytics (UACCT)
+import HSP.Google.Analytics (UACCT(..), analyticsAsync)
 
 template ::
     ( EmbedAsChild (Clck ClckURL) headers

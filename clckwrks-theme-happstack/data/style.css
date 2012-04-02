@@ -211,7 +211,7 @@ blockquote
 
 #footer
 {
-    height: 500px;
+    height: 200px;
     background-color: #333;
     margin-top: 25em;
     padding: 1em;
@@ -225,6 +225,6 @@ blockquote
 
 #copyright
 {
-    padding-top: 450px;
+    padding-top: 150px;
     text-align: center;
 }

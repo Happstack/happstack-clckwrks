@@ -29,6 +29,6 @@ Library
 
   Build-depends:
         base          < 5,
-        clckwrks,
-        happstack-hsp >= 6.2.8,
+        clckwrks      >= 0.1.4,
+        happstack-hsp >= 7.0.1,
         text
