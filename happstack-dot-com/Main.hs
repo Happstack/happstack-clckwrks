@@ -61,7 +61,7 @@ clckwrksOpts def =
     , Option [] ["hostname"]      (ReqArg setHostname "hostname") ("Server hostename, default: " ++ show (clckHostname def))
     , Option [] ["base-uri"]      (ReqArg setBaseURI "URI")       ("Hostname and port, default: " ++ show ("http://" ++ clckHostname def ++ ":" ++ show (clckPort def)))
     , Option [] ["jquery-path"]   (ReqArg setJQueryPath "path")   ("path to jquery directory, default: " ++ show (clckJQueryPath def))
-    , Option [] ["jqueryui-path"] (ReqArg setJQueryPath "path")   ("path to jqueryui directory, default: " ++ show (clckJQueryUIPath def))
+    , Option [] ["jqueryui-path"] (ReqArg setJQueryUIPath "path") ("path to jqueryui directory, default: " ++ show (clckJQueryUIPath def))
     , Option [] ["jstree-path"]   (ReqArg setJSTreePath "path")   ("path to jstree directory, default: " ++ show (clckJSTreePath def))
     , Option [] ["json2-path"]    (ReqArg setJSON2Path  "path")   ("path to json2 directory, default: " ++ show (clckJSON2Path def))
     , Option [] ["theme-path"]    (ReqArg setThemeDir   "path")   ("path to theme directory, default: " ++ show (clckThemeDir def))
