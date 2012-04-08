@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.1.4
+Version:             0.1.5
 Synopsis:            happstack.com
 -- Description:
 Homepage:            http://www.happstack.com/
@@ -22,17 +22,18 @@ Executable happstack-server
   cpp-options: -DCABAL
   Extensions: CPP
   Build-depends:
-        base         < 5,
-        bytestring   == 0.9.*,
-        clckwrks,
-        clckwrks-plugin-media,
-        containers   == 0.4.*,
-        filepath     == 1.3.*,
-        mtl          == 2.0.*,
-        network,
-        text         == 0.11.*,
-        web-routes-happstack,
-        web-routes-th == 0.21.*
+        base                    < 5,
+        bytestring             == 0.9.*,
+        clckwrks               == 0.4.*,
+        clckwrks-plugin-media  == 0.1.*,
+        clckwrks-plugin-ircbot == 0.1.*,
+        containers             == 0.4.*,
+        filepath               == 1.3.*,
+        mtl                    == 2.0.*,
+        network                == 2.3.*,
+        text                   == 0.11.*,
+        web-routes-happstack   == 0.23.*,
+        web-routes-th          == 0.21.*
 
   if flag(plugins)
     Build-depends:

@@ -1,9 +1,10 @@
-{-# LANGUAGE CPP, RankNTypes, RecordWildCards, OverloadedStrings #-}
+{-# LANGUAGE CPP, RankNTypes, RecordWildCards, OverloadedStrings, FlexibleContexts #-}
 module Main where
 
 import Control.Monad.State      (evalStateT, get, modify)
 import Clckwrks
 import Clckwrks.Admin.Template  (defaultAdminMenu)
+import Clckwrks.IrcBot          (IrcConfig(..), IrcBotConfig(..), User(..), IrcBotURL(..), addIrcBotAdminMenu, withIrcBotConfig, runIrcBotT, routeIrcBot)
 import Clckwrks.Server
 import Clckwrks.Media
 import Clckwrks.Media.PreProcess (mediaCmd)
@@ -11,6 +12,7 @@ import qualified Data.ByteString.Char8 as C
 import Data.List                 (intercalate)
 import qualified Data.Map        as Map
 import Data.Monoid               (mappend)
+import qualified Data.Set        as Set
 import Data.Text                 (Text)
 import Data.Text.Lazy.Builder    (Builder)
 import qualified Data.Text                      as Text
@@ -24,6 +26,7 @@ import System.Console.GetOpt
 import System.Environment        (getArgs)
 import System.Exit               (exitFailure, exitSuccess)
 import System.FilePath           ((</>))
+import Theme.Template            (template)
 import URL
 import Web.Routes.Happstack      ()
 import qualified Theme.Blog      as Blog
@@ -62,7 +65,7 @@ clckwrksOpts def =
     , Option [] ["jstree-path"]   (ReqArg setJSTreePath "path")   ("path to jstree directory, default: " ++ show (clckJSTreePath def))
     , Option [] ["json2-path"]    (ReqArg setJSON2Path  "path")   ("path to json2 directory, default: " ++ show (clckJSON2Path def))
     , Option [] ["theme-path"]    (ReqArg setThemeDir   "path")   ("path to theme directory, default: " ++ show (clckThemeDir def))
-    , Option [] ["top"]           (ReqArg noop "ignored")         "unused"
+    , Option [] ["top"]           (ReqArg setTopDir     "path")   ("path to directory that holds the state directory, uploads, etc")
     , Option [] ["static"]        (ReqArg noop "ignored")         "unused"
     , Option [] ["logs"]          (ReqArg noop "ignored")         "unimplemented"
     , Option [] ["log-mode"]      (ReqArg noop "ignored")         "unimplemented"
@@ -79,6 +82,7 @@ clckwrksOpts def =
       setJSTreePath   str = ModifyConfig $ \c -> c { clckJSTreePath   = str      }
       setJSON2Path    str = ModifyConfig $ \c -> c { clckJSON2Path    = str      }
       setThemeDir     str = ModifyConfig $ \c -> c { clckThemeDir     = str      }
+      setTopDir       str = ModifyConfig $ \c -> c { clckTopDir       = Just str }
 
 -- | Parse the command line arguments into a list of flags. Exits with usage
 -- message, in case of failure.
@@ -122,6 +126,7 @@ clckwrksConfig =
                   , clckThemeDir     = themeDir
                   , clckPluginDir    = [("media", mediaDir)]
                   , clckStaticDir    = clckDir </> "static"
+                  , clckTopDir       = Nothing
 #ifdef PLUGINS
                   , clckPageHandler  = undefined
 #else
@@ -214,9 +219,9 @@ initPlugins =
            mediaCmd' = mediaCmd (\u p -> showFn (M u) p)
        addPreProcessor "media" mediaCmd'
        nestURL M $ addMediaAdminMenu
+       nestURL I $ addIrcBotAdminMenu
        dm <- nestURL C $ defaultAdminMenu
        mapM_ addAdminMenu dm
-
 
 ------------------------------------------------------------------------------
 -- Server
@@ -236,13 +241,43 @@ but, we don't know how to show those urls until we call mkSitePlus -- which requ
 
 -}
 
+setRoot cc path =
+    case clckTopDir cc of
+      Nothing  -> path
+      (Just base) -> base </> path
+
+
 clckwrks :: ClckwrksConfig SiteURL -> IO ()
 clckwrks cc =
     do args <- getArgs
        withClckwrks cc $ \clckState ->
-           withMediaConfig Nothing "_uploads" $ \mediaConf ->
+        withMediaConfig (clckTopDir cc) (setRoot cc "_uploads") $ \mediaConf ->
+         let ircConfig = IrcConfig { ircHost = "irc.freenode.net"
+                                   , ircPort = 6667
+                                   , ircNick = "synthea"
+                                   , ircCommandPrefix = "#"
+                                   , ircUser  = User { username   = "synthea"
+                                                     , hostname   = "happstack.com"
+                                                     , servername = "irc.freenode.net"
+                                                     , realname   = "happstack.com bot"
+                                                     }
+                                   , ircChannels = Set.singleton "#happs"
+                                   }
+{-
+             template' :: forall headers body m.
+                                       ( EmbedAsChild (ClckT IrcBotURL m) headers
+                                       , EmbedAsChild (ClckT IrcBotURL m) body
+                                       ) =>
+                                          String
+                                       -> headers
+                                       -> body
+                                       -> XMLGenT (ClckT SiteURL m) XML
+-}
+             template' = undefined
+         in
+         withIrcBotConfig (clckTopDir cc) ircConfig template' (setRoot cc "_irclogs") $ \ircBotConf ->
                let -- site     = mkSite (clckPageHandler cc) clckState mediaConf
-                   site     = mkSite2 cc mediaConf
+                   site     = mkSite2 cc mediaConf ircBotConf
                    sitePlus = mkSitePlus (Text.pack $ clckHostname cc) (clckPort cc) Text.empty site
                in
                  do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
@@ -314,15 +349,31 @@ In theory, we would like to do some stuff in the ClckT monad before start listen
 
 Though it seems the information we need comes from Site not implSite.
 -}
-routeSite :: ClckwrksConfig u -> MediaConfig -> SiteURL -> Clck SiteURL Response
-routeSite cc mediaConfig url =
+routeSite :: ClckwrksConfig u -> MediaConfig -> IrcBotConfig -> SiteURL -> Clck SiteURL Response
+routeSite cc mediaConfig ircBotConfig url =
     do case url of
-        (C clckURL)  -> nestURL C $ routeClck cc clckURL
-        (M mediaURL) ->
+        (C clckURL)   -> nestURL C $ routeClck cc clckURL
+        (M mediaURL)  ->
             do showFn <- askRouteFn
                -- FIXME: it is a bit silly that we wait this  long to set the mediaClckURL
                -- would be better to do it before we forkIO on simpleHTTP
                nestURL M $ runMediaT (mediaConfig { mediaClckURL = (showFn . C) })  $ routeMedia mediaURL
+        (I ircBotURL) ->
+            do showFn <- askRouteFn
+               let deRoute :: (ClckURL -> [(Text, Maybe Text)] -> Text) -> Clck ClckURL a -> Clck url a
+                   deRoute sf (ClckT (RouteT r)) = (ClckT (RouteT (\nsf -> (r sf))))
+               let template' :: ( EmbedAsChild (Clck ClckURL) headers
+                                , EmbedAsChild (Clck ClckURL) body
+                                ) => String
+                             -> headers
+                             -> body
+                             -> XMLGenT (Clck IrcBotURL) XML
+                   template' ttl hdrs bdy =
+                       XMLGenT $ (deRoute (showFn . C) $ unXMLGenT $ template ttl hdrs bdy)
+
+               nestURL I $ runIrcBotT (ircBotConfig { ircBotClckURL      = (showFn . C)
+                                                    , ircBotPageTemplate = template'
+                                                    })  $ routeIrcBot ircBotURL
 {-
 mkSite :: ClckwrksConfig u -> ClckState -> MediaConfig -> Site SiteURL (ServerPart Response)
 mkSite cc clckState media = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI route'
@@ -331,12 +382,12 @@ mkSite cc clckState media = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI rout
           evalStateT (unRouteT (unClckT $ routeSite cc media u) f) clckState
 -}
 -- FIXME: something seems weird here.. we do not use the 'f' in route'
-mkSite2 :: ClckwrksConfig u -> MediaConfig -> Site SiteURL (ClckT SiteURL (ServerPartT IO) Response)
-mkSite2 cc mediaConfig = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI route'
+mkSite2 :: ClckwrksConfig u -> MediaConfig -> IrcBotConfig -> Site SiteURL (ClckT SiteURL (ServerPartT IO) Response)
+mkSite2 cc mediaConfig ircBotConfig = setDefault (C $ ViewPage $ PageId 1) $ mkSitePI route'
     where
       route' :: (SiteURL -> [(Text.Text, Maybe Text.Text)] -> Text.Text) -> SiteURL -> ClckT SiteURL (ServerPartT IO) Response
       route' f url =
-          routeSite cc mediaConfig url
+          routeSite cc mediaConfig ircBotConfig url
 
 #ifdef PLUGINS
 main :: IO ()
