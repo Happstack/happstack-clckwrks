@@ -4,9 +4,10 @@ module Theme.Template where
 
 import Clckwrks
 import Clckwrks.ProfileData.Acid (HasRole(..))
-import Data.String (IsString(..))
-import Data.Text (Text)
-import HSP.Google.Analytics (UACCT(..), analyticsAsync)
+import qualified Data.Set        as Set
+import Data.String               (IsString(..))
+import Data.Text                 (Text)
+import HSP.Google.Analytics      (UACCT(..), analyticsAsync)
 
 template ::
     ( EmbedAsChild (Clck ClckURL) headers
@@ -40,7 +41,7 @@ template title headers body =
            case mu of
              Nothing -> <% () %>
              (Just uid) ->
-                 do r <- query (HasRole uid Administrator)
+                 do r <- query (HasRole uid (Set.singleton Administrator))
                     if not r
                       then <% () %>
                       else <%>
