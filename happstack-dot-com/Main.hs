@@ -318,7 +318,9 @@ route cc sitePlus =
             , dir "static"      $ serveDirectory DisableBrowsing [] (clckStaticDir cc)
             , dir "login"       $ seeOther ((siteShowURL sitePlus) (C $ Auth $ AuthURL A_Login) []) (toResponse ())
             , dir "admin"       $ seeOther ((siteShowURL sitePlus) (C $ Admin Console) []) (toResponse ())
-            , dir "docs"         $ msum
+            , dir "blog" $ dir "atom.xml" $ seeOther ((siteShowURL sitePlus) (C $ AtomFeed) []) (toResponse ())
+            , dir "blog"        $ seeOther ((siteShowURL sitePlus) (C $ Blog) []) (toResponse ())
+            , dir "docs"        $ msum
                       [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack-crashcourse"
                       , serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack/7"
                       ]
