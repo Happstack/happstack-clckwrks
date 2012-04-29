@@ -1,9 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -F -pgmFtrhsx #-}
-<%
 module Theme.Blog where
 
 import Clckwrks
+import Data.Text (unpack)
+import Theme.Template
 
 postsHTML :: XMLGenT (Clck ClckURL) XML
 postsHTML =
@@ -22,24 +23,12 @@ postHTML Page{..} =
     </li>
 
 page :: XMLGenT (Clck ClckURL) XML
-
-%>
-
-<html>
- <head>
-  <title>Blog</title>
-  <link rel="stylesheet" type="text/css" href=(ThemeData "style.css")    />
-  <link rel="stylesheet" type="text/css" href=(ThemeData "hscolour.css") />
- </head>
- <body>
-  <div id="clckwrks-menu">
-    <span id="clck"><a href="/">Clck</a></span><span id="wrks"><a href="/">wrks</a></span><br />
-    <span id="clckwrks-byline">for secure, reliable, & <br />integrated websites</span>
-    <% getMenu %>
-  </div>
-
-  <div id="clckwrks-body">
-   <% postsHTML %>
-  </div>
- </body>
-</html>
+page =
+    do ttl <- lift getBlogTitle
+       template (unpack ttl) () $
+           <%>
+            <div id="page-content">
+             <h1 class="page-title"><% ttl %></h1>
+             <% postsHTML %>
+            </div>
+           </%>
