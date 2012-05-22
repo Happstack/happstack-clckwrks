@@ -69,7 +69,7 @@ Homepage: http://www.happstack.com/
 Package: happstack-dot-com-server
 Architecture: any
 Section: misc
-Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}, haskell-clckwrks-theme-happstack-utils
+Depends: ${shlibs:Depends}, ${haskell:Depends}, ${misc:Depends}
 Description: happstack.com server
 
 Package: happstack-dot-com-production

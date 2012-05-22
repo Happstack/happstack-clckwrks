@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.1.10) unstable; urgency=low
+
+  * happstack-dot-com-server: Autogenerate some *-utils Depends 
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Mon, 21 May 2012 19:16:44 -0500
+
 haskell-happstack-dot-com (0.1.5) unstable; urgency=low
 
   * Bump version to match cabal file.

@@ -249,8 +249,7 @@ setRoot cc path =
 
 clckwrks :: ClckwrksConfig SiteURL -> IO ()
 clckwrks cc =
-    do args <- getArgs
-       withClckwrks cc $ \clckState ->
+    do withClckwrks cc $ \clckState ->
         withMediaConfig (clckTopDir cc) (setRoot cc "_uploads") $ \mediaConf ->
          let ircConfig = IrcConfig { ircHost = "irc.freenode.net"
                                    , ircPort = 6667
