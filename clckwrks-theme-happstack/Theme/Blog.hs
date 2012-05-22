@@ -9,7 +9,7 @@ import Theme.Template
 postsHTML :: XMLGenT (Clck ClckURL) XML
 postsHTML =
     do posts <- getPosts
-       <ol id="blog-posts">
+       <ol class="blog-posts">
         <% mapM postHTML posts %>
         </ol>
 

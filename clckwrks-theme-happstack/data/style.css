@@ -228,3 +228,8 @@ blockquote
     padding-top: 150px;
     text-align: center;
 }
+
+ol.blog-posts
+{
+    list-style-type: none;
+}
