@@ -1,13 +1,13 @@
 Name:                happstack-dot-com
-Version:             0.1.10
+Version:             0.1.11
 Synopsis:            happstack.com
--- Description:
+Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
 License:             BSD3
 License-file:        LICENSE
 Author:              Jeremy Shaw
 Maintainer:          jeremy@n-heptane.com
--- Copyright:
+Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
 Build-type:          Simple
 Cabal-version:       >=1.2
@@ -24,7 +24,7 @@ Executable happstack-server
   Build-depends:
         base                    < 5,
         bytestring             == 0.9.*,
-        clckwrks               == 0.6.*,
+        clckwrks               == 0.7.*,
         clckwrks-plugin-media  == 0.2.*,
         clckwrks-plugin-ircbot == 0.2.*,
         containers             == 0.4.*,
