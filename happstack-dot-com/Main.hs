@@ -125,7 +125,7 @@ clckwrksConfig =
                   , clckJSTreePath   = clckDir </> "jstree"
                   , clckJSON2Path    = clckDir </> "json2"
                   , clckThemeDir     = themeDir
-                  , clckPluginDir    = [("media", mediaDir)]
+                  , clckPluginDir    = Map.fromList [("media", mediaDir)]
                   , clckStaticDir    = clckDir </> "static"
                   , clckTopDir       = Nothing
 #ifdef PLUGINS
