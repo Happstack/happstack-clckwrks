@@ -43,7 +43,7 @@ template title headers body =
                  do r <- query (HasRole uid (Set.singleton Administrator))
                     if not r
                       then <% () %>
-                      else do pid <- getPageId
+                      else do pid <- lift getPageId
                               <%>
                                <div><a href=(Auth $ AuthURL A_Login)>login</a></div>
                                <div><a href=(Admin Console)>admin console</a></div>
