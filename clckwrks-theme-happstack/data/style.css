@@ -233,3 +233,8 @@ ol.blog-posts
 {
     list-style-type: none;
 }
+
+.pub-info
+{
+    font-style: italic;
+}
