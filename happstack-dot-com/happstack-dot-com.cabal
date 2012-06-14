@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.1.12
+Version:             0.1.13
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -24,7 +24,7 @@ Executable happstack-server
   Build-depends:
         base                    < 5,
         bytestring             == 0.9.*,
-        clckwrks               == 0.8.*,
+        clckwrks               == 0.9.*,
         clckwrks-plugin-media  == 0.2.*,
         clckwrks-plugin-ircbot == 0.2.*,
         containers             == 0.4.*,
