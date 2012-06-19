@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.1.13
+Version:             0.1.14
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -16,6 +16,10 @@ Flag plugins
      Description: enable dynamic recompilation
      Default: False
 
+Flag backups
+     Description: enable the backups executable (currently disabled by default do to wacky dependencies not on hackage)
+     Default: False
+
 Executable happstack-server
   Main-is: Main.hs
   ghc-options: -threaded -O2 -rtsopts
@@ -24,7 +28,7 @@ Executable happstack-server
   Build-depends:
         base                    < 5,
         bytestring             == 0.9.*,
-        clckwrks               == 0.9.*,
+        clckwrks               == 0.10.*,
         clckwrks-plugin-media  == 0.2.*,
         clckwrks-plugin-ircbot == 0.2.*,
         containers             == 0.4.*,
@@ -46,5 +50,9 @@ Executable happstack-server
 
 Executable happstack-dot-com-backups
  Main-Is: Backups.hs
- GHC-Options: -threaded -Wall -Wwarn -O2 -fno-warn-name-shadowing -fno-warn-missing-signatures -fwarn-tabs -fno-warn-unused-binds -fno-warn-orphans -fwarn-unused-imports -fno-spec-constr
- Build-depends: archive >= 1.2.9, base, Extra
+ if flag(backups)
+   Buildable: True
+   GHC-Options: -threaded -Wall -Wwarn -O2 -fno-warn-name-shadowing -fno-warn-missing-signatures -fwarn-tabs -fno-warn-unused-binds -fno-warn-orphans -fwarn-unused-imports -fno-spec-constr
+   Build-depends: archive >= 1.2.9, base, Extra
+ else
+  Buildable: False
