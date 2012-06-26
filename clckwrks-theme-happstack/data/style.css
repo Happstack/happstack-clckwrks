@@ -10,7 +10,7 @@ body
  outline-color: #333;
  outline-style: none;
  outline-width:  0px;
- color: #555;
+ color: #333;
  padding: 0;
  margin: 0;
 }
@@ -115,7 +115,7 @@ h2
     width: 800px;
     height: 100px;
     top: 400px;
-    color: #555;
+    color: #333;
     padding: 1em;
     font-size: 14px;
     line-height: 75px;
