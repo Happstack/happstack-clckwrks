@@ -16,7 +16,7 @@ summaryBox pid title iconURL =
 
 page :: XMLGenT (Clck ClckURL) XML
 page =
-    template "Home" () $
+    template "happstack.com" () $
         <%>
          <div id="banner-box">
           <div class="mesh"></div>
