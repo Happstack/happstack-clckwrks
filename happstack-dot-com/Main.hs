@@ -321,6 +321,7 @@ route cc sitePlus =
             , dir "admin"       $ seeOther ((siteShowURL sitePlus) (C $ Admin Console) []) (toResponse ())
             , dir "blog" $ dir "atom.xml" $ seeOther ((siteShowURL sitePlus) (C $ AtomFeed) []) (toResponse ())
             , dir "blog"        $ seeOther ((siteShowURL sitePlus) (C $ Blog) []) (toResponse ())
+            , dir "cufp2012"    $ seeOther ((siteShowURL sitePlus) (C $ ViewPage (PageId 13)) []) (toResponse ())
             , dir "docs"        $ msum
                       [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack-crashcourse"
                       , serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack/7"
