@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.1.16) unstable; urgency=low
+
+  * Updated clckwrks 0.11 (page slugs)
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Fri, 10 Aug 2012 15:21:11 -0500
+
 haskell-happstack-dot-com (0.1.14) unstable; urgency=low
 
   * Updated to clckwrks 0.10.*
