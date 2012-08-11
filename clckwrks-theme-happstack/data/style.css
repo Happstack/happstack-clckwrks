@@ -2,9 +2,9 @@
 body
 {
 /* font-family:"Lucida Sans Unicode","Lucida Grande","Trebuchet MS",Helvetica,Arial,sans-serif;*/
- font-family: 'Gudea', Verdana,Arial,sans-serif;
+ font-family: 'Gudea', Verdana, Arial, sans-serif;
 /* font-family: Arial, Helevtica, Verdana, san-serif;  */
- font-size: 13px;
+ font-size: 16px;
 /*  background-color: #dde7eb; */
  line-height: 1.8;
  outline-color: #333;
@@ -15,9 +15,19 @@ body
  margin: 0;
 }
 
+a, a:visited
+{
+    color: black;
+}
+
 h1.page-title
 {
     font-size: 1.75em;
+}
+
+h1, h2, h3, h4
+{
+    color: #558;
 }
 
 h1
@@ -25,9 +35,9 @@ h1
     font-weight: normal;
     margin-top: 0;
     font-size: 1.5em;
-    border-bottom: 1px dotted #ddd;
-    margin-bottom: 2em;
-    margin-top: 2em;
+/*    border-bottom: 1px dotted #ddd; */
+    margin-bottom: 1em;
+    margin-top: 1em;
     margin-left: -1em;
 }
 
@@ -38,11 +48,18 @@ h2
     margin-left: -1em;
 }
 
+h3
+{
+    font-weight: normal;
+    font-size: 1.1em;
+    margin-left: -0.5em;
+}
+
 #logo
 {
     position: absolute;
-    font-size: 2em;
-    color: #777;
+    font-size: 1.75em;
+    color: #ccc;
     padding-left: 1em;
 }
 
@@ -51,7 +68,7 @@ h2
     margin-top: 0;
     padding-top: 0;
     margin-left: 15em;
-    margin-right: 15em;
+    width: 45em;
 }
 
 .page-menu
@@ -63,6 +80,11 @@ h2
     margin-bottom: 1em; */
     margin: 0;
     background: black;
+}
+
+div.page-menu
+{
+    box-shadow: 0 0 4px 4px #e7e7e7;
 }
 
 .menu-inner-div
@@ -78,7 +100,7 @@ h2
 .page-menu ul
 {
     padding: 0;
-    font-size: 1.5em;
+    font-size: 1.25em;
     display: inline;
     list-style-type: none;
 }
@@ -91,6 +113,12 @@ h2
     padding-right: 1.5em;
     margin-right: -1px;
     line-height: 2.5em;
+    border-right: 1px solid #333;
+}
+
+.page-menu li:last-child
+{
+    border-right: none;
 }
 
 .page-menu a
@@ -148,11 +176,12 @@ h2
 {
     text-align: center;
     background: white;
+    margin-top: 1em;
 }
 
 #banner-box img
 {
-    margin-top: 5em;
+    margin-top: 1em;
 }
 /*
 #banner-box
@@ -178,13 +207,12 @@ blockquote
     font-family: Georgia,"Times New Roman",Times,serif;
     font-style: italic;
     text-align: center;
-    font-size: 1.4em;
+    font-size: 1.2em;
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    line-height: 1;
 }
 
 .summary-box
@@ -211,11 +239,12 @@ blockquote
 
 #footer
 {
-    height: 200px;
+    height: 2em;
     background-color: #333;
     margin-top: 25em;
     padding: 1em;
     color: #aaa;
+    line-height: 2;
 }
 
 #footer a
@@ -225,7 +254,6 @@ blockquote
 
 #copyright
 {
-    padding-top: 150px;
     text-align: center;
 }
 
