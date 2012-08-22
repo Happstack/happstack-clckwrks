@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP, RankNTypes, RecordWildCards, OverloadedStrings, FlexibleContexts #-}
 module Main where
 
+import Control.Concurrent       (forkIO, killThread)
 import Control.Monad.State      (evalStateT, get, modify)
 import Clckwrks
 import Clckwrks.Admin.Template  (defaultAdminMenu)
@@ -16,6 +17,7 @@ import qualified Data.Set        as Set
 import Data.Text                 (Text)
 import Data.Text.Lazy.Builder    (Builder)
 import qualified Data.Text                      as Text
+import Happstack.Server.SimpleHTTP (waitForTermination)
 import Network.URI (URI(..), URIAuth(..), parseAbsoluteURI)
 import qualified Paths_clckwrks                 as Clckwrks
 #ifdef CABAL
@@ -283,7 +285,9 @@ clckwrks cc =
                in
                  do clckState'    <- execClckT (siteShowURL sitePlus) clckState $ initPlugins
                     let sitePlus' = fmap (evalClckT (siteShowURL sitePlus) clckState') sitePlus
-                    simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
+                    tid <- forkIO $ simpleHTTP (nullConf { port = clckPort cc }) (route cc sitePlus')
+                    waitForTermination
+                    killThread tid
 
 {-
 -- clckwrks_ :: ClckwrksConfig SiteURL -> (IO (Site SiteURL (ClckT SiteURL (ServerPartT IO) Response) -> IO ())) -> IO ()
