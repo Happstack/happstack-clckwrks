@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.1.18) unstable; urgency=low
+
+  * Added twitter widget to homepage
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Tue, 02 Oct 2012 16:43:22 -0500
+
 haskell-happstack-dot-com (0.1.17) unstable; urgency=low
 
   * Updated to clckwrks 0.12
