@@ -48,8 +48,12 @@ mytargets =
 main :: IO ()
 main =
   do ok <- sshVerify (user ++ "@" ++ host) Nothing
-     case ok of
-       False -> hPutStrLn stderr ("Unable to contact " ++ user ++ "@" ++ host) >> exitWith (ExitFailure 1)
-       True ->
+     init <- elem "--initialize" <$> getArgs
+     case (init, ok) of
+       (True, _) -> --initialize now exits immediately
+         exitWith ExitSuccess
+       (False, False) ->
+         hPutStrLn stderr ("Unable to contact " ++ user ++ "@" ++ host) >> exitWith (ExitFailure 1)
+       (False, True) ->
          do withArgs [target] (updateMirrorMain mytargets)
             prune format local (target ++ "-") keep
