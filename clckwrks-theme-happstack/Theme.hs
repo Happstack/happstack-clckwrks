@@ -32,7 +32,7 @@ pageTemplate ttl hdr bdy =
        case pid of
          (PageId 1) -> home ttl hdr bdy
          _          -> standardTemplate ttl hdr <div id="page-content">
-                                                 <h1 class="page-title">Documentation</h1>
+                                                 <h1 class="page-title"><% ttl %></h1>
                                                  <% bdy %>
                                                 </div>
 
