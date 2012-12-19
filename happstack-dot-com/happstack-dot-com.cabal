@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.2.1
+Version:             0.2.2
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -22,7 +22,7 @@ Flag backups
 
 Executable happstack-dot-com-server
   Main-is: Main.hs
-  ghc-options: -threaded -O2 -rtsopts
+  ghc-options: -threaded -O2 -rtsopts -with-rtsopts=-I0
   cpp-options: -DCABAL
   Extensions: CPP
   Build-depends:
