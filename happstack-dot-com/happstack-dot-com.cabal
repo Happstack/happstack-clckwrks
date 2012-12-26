@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.2.2
+Version:             0.2.3
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -10,7 +10,7 @@ Maintainer:          Jeremy Shaw <jeremy@n-heptane.com>
 Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
 Build-type:          Simple
-Cabal-version:       >=1.2
+Cabal-version:       >=1.6
 
 Flag plugins
      Description: enable dynamic recompilation
@@ -28,7 +28,7 @@ Executable happstack-dot-com-server
   Build-depends:
         base                     >4 && < 5,
         bytestring               >= 0.9 && < 0.11,
-        clckwrks                 == 0.13.*,
+        clckwrks                 >= 0.13 && < 0.15,
         clckwrks-plugin-media    == 0.3.*,
         clckwrks-plugin-ircbot   == 0.3.*,
         clckwrks-theme-happstack == 0.2.*,
