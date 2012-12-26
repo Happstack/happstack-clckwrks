@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.2.3) unstable; urgency=low
+
+  * Bumped to allow clckwrks 0.14
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Wed, 26 Dec 2012 11:58:31 -0600
+
 haskell-happstack-dot-com (0.2.2) unstable; urgency=low
 
   * Added -with-rtsopts=-I0 to ghc-options
