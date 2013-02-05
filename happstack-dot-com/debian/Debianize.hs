@@ -17,7 +17,8 @@ main =
        log <- inputChangeLog "debian"
        getSimplePackageDescription' "." defaultAtoms >>=
          cabalToDebianization "." . customize jstreePath json2Path log >>=
-         putStrLn . describeDebianization old
+         -- putStrLn . describeDebianization old
+         writeDebianization
 
 customize jstreePath json2Path log =
     modControl (\ y -> y {homepage = Just "http://www.happstack.com/"}) .
