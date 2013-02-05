@@ -11,7 +11,7 @@ import Text.PrettyPrint.ANSI.Leijen (Pretty, pretty, text)
 
 main :: IO ()
 main =
-    do old <- inputDebianization "."
+    do -- old <- inputDebianization "."
        jstreePath <- Clckwrks.getDataFileName "jstree"
        json2Path  <- Clckwrks.getDataFileName "json2"
        log <- inputChangeLog "debian"
