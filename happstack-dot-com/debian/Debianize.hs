@@ -50,7 +50,7 @@ tight deb = List.foldr (tightDependencyFixup
                          -- installed during the build.
                          [(BinPkgName "libghc-clckwrks-theme-happstack-dev", BinPkgName "haskell-clckwrks-theme-happstack-utils"),
                           (BinPkgName "libghc-clckwrks-plugin-media-dev", BinPkgName "haskell-clckwrks-plugin-media-utils"),
-                          (BinPkgName "libghc-clckwrks-plugin-bugs-dev", BinPkgName "haskell-clckwrks-plugin-bugs-utils"),
+                          (BinPkgName "libghc-clckwrks-plugin-ircbot-dev", BinPkgName "haskell-clckwrks-plugin-ircbot-utils"),
                           (BinPkgName "libghc-clckwrks-dev", BinPkgName "haskell-clckwrks-utils")]) deb serverNames
 
 theSite :: FilePath -> FilePath -> BinPkgName -> Site
