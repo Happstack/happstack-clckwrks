@@ -2,6 +2,7 @@
 import Data.Lens.Lazy (setL, modL)
 import Data.List as List (map, isPrefixOf, concat, foldr)
 import Data.Maybe (fromMaybe)
+import Data.Set as Set (insert)
 import Data.Text as T
 import Debian.Changes (ChangeLog)
 import Debian.Debianize
@@ -21,16 +22,16 @@ main =
          writeDebianization
 
 customize jstreePath json2Path log =
-    modControl (\ y -> y {homepage = Just "http://www.happstack.com/"}) .
+    modL control (\ y -> y {homepage = Just "http://www.happstack.com/"}) .
     setL sourceFormat (Just Native3) .
-    missingDependency (BinPkgName "libghc-clckwrks-theme-happstack-doc") .
-    setRevision "" .
+    modL missingDependencies (insert (BinPkgName "libghc-clckwrks-theme-happstack-doc")) .
+    setL revision (Just "") .
     doWebsite (BinPkgName "happstack-dot-com-production") (theSite jstreePath json2Path (BinPkgName "happstack-dot-com-production")) .
     doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups" .
     fixRules .
     tight .
     setL changelog (Just log) .
-    modControl (\ x -> x {standardsVersion = Just (StandardsVersion 3 9 4 Nothing)}) .
+    modL control (\ x -> x {standardsVersion = Just (StandardsVersion 3 9 4 Nothing)}) .
     setL compat (Just 7)
 
 serverNames = List.map BinPkgName ["happstack-dot-com-production"]
