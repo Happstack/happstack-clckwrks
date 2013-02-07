@@ -8,6 +8,8 @@ import Clckwrks.Server           (simpleClckwrks)
 import Clckwrks.Plugin           (clckPlugin)
 import Clckwrks.IrcBot.Plugin    (ircBotPlugin)
 import Clckwrks.Media.Plugin     (mediaPlugin)
+import Clckwrks.Page.Plugin      (pagePlugin)
+import Clckwrks.Page.URL         (PageURL(..))
 import Control.Applicative       ((<$>))
 import Control.Monad             (msum)
 import Control.Monad.Trans
@@ -16,7 +18,7 @@ import Data.Text                  (Text, unpack)
 import qualified Data.Text        as Text
 import "clckwrks-theme-happstack" Theme
 import Web.Routes                 (showURL)
-import Web.Plugins.Core           (addHandler, initPlugin, setTheme)
+import Web.Plugins.Core           (Plugin(..), addHandler, getPluginRouteFn, initPlugin, setTheme)
 import System.Environment         (getArgs)
 
 
@@ -29,6 +31,7 @@ clckwrksConfig = ClckwrksConfig
     { clckHostname        = "localhost"
     , clckPort            = 8000
     , clckHidePort        = False
+    , clckTLS             = Nothing      -- disable TLS by default
     , clckJQueryPath      = ""
     , clckJQueryUIPath    = ""
     , clckJSTreePath      = ""
@@ -46,7 +49,7 @@ main :: IO ()
 main =
     do args <- getArgs
        f    <- parseArgs (clckwrksOpts clckwrksConfig) args
-       simpleClckwrks  (f clckwrksConfig)
+       simpleClckwrks =<< f clckwrksConfig
 
 initHook :: Text
          -> ClckState
@@ -56,23 +59,24 @@ initHook baseURI clckState cc =
     do let p = plugins clckState
        addHandler p "docs" docHandler
        addHandler p "blog" blogHandler
-       initPlugin p baseURI clckPlugin
-       initPlugin p baseURI ircBotPlugin
-       initPlugin p baseURI mediaPlugin
+       initPlugin p "" clckPlugin
+       initPlugin p "" pagePlugin
+       initPlugin p "" ircBotPlugin
+       initPlugin p "" mediaPlugin
        setTheme p (Just theme)
        return (clckState, cc)
 
-
 blogHandler :: ClckPlugins -> [Text] -> ClckT ClckURL (ServerPartT IO) Response
-blogHandler _plugins [] =
-    do blogURL <- showURL Blog
-       seeOther blogURL (toResponse ())
-blogHandler _plugins ["atom.xml"] =
-    do atomURL <- showURL AtomFeed
-       seeOther atomURL (toResponse ())
-blogHandler _plugins _ =
-    do notFound (toResponse ())
-
+blogHandler plugins paths =
+    do (Just showPageURL) <- getPluginRouteFn plugins (pluginName pagePlugin)
+       case paths of
+         [] ->
+            do let blogURL = showPageURL Blog []
+               seeOther blogURL (toResponse ())
+         ["atom.xml"] ->
+             do let atomURL = showPageURL AtomFeed []
+                seeOther atomURL (toResponse ())
+         _ -> notFound (toResponse ())
 
 docHandler :: ClckPlugins -> [Text] -> ClckT ClckURL (ServerPartT IO) Response
 docHandler _plugins paths =

@@ -4,6 +4,7 @@ module Theme where
 
 import Clckwrks
 import Clckwrks.Monad
+import Clckwrks.Menu.API         (getMenu)
 import Clckwrks.ProfileData.Acid (HasRole(..))
 import Data.Maybe                (fromMaybe)
 import qualified Data.Set        as Set
@@ -16,7 +17,7 @@ theme :: Theme
 theme = Theme
     { themeName      = "happstack"
     , _themeTemplate = pageTemplate
-    , themeBlog      = blog
+--    , themeBlog      = blog
     , themeDataDir   = getDataDir
     }
 
@@ -27,7 +28,8 @@ pageTemplate :: ( EmbedAsChild (ClckT ClckURL (ServerPartT IO)) headers
              -> headers
              -> body
              -> XMLGenT (ClckT ClckURL (ServerPartT IO)) XML
-pageTemplate ttl hdr bdy =
+pageTemplate ttl hdr bdy = standardTemplate ttl hdr bdy
+{-
     do pid <- XMLGenT $ getPageId
        case pid of
          (PageId 1) -> home ttl hdr bdy
@@ -35,7 +37,7 @@ pageTemplate ttl hdr bdy =
                                                  <h1 class="page-title"><% ttl %></h1>
                                                  <% bdy %>
                                                 </div>
-
+-}
 ------------------------------------------------------------------------------
 -- standard template
 ------------------------------------------------------------------------------
@@ -67,6 +69,7 @@ standardTemplate ttl hdrs bdy =
       <% bdy %>
 
       <div id="footer">
+{-
        <% do mu <- getUserId
              case mu of
                Nothing -> <% () %>
@@ -81,6 +84,7 @@ standardTemplate ttl hdrs bdy =
                                  <div><a href=(Admin (EditPage pid))>edit this page</a></div>
                                 </%>
          %>
+-}
        <div id="copyright">Powered by Happstack. Copyright 2012, SeeReason Partners LLC</div>
       </div>
      </body>
@@ -89,7 +93,7 @@ standardTemplate ttl hdrs bdy =
 ------------------------------------------------------------------------------
 -- Home
 ------------------------------------------------------------------------------
-
+{-
 summaryBox :: PageId -> String -> String -> GenXML (Clck ClckURL)
 summaryBox pid title iconURL =
     <div class="summary-box">
@@ -135,11 +139,11 @@ twitter =
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
    </div>
 
-
+-}
 ------------------------------------------------------------------------------
 -- Blog
 ------------------------------------------------------------------------------
-
+{-
 -- | create a list of of all the blog posts
 postsHTML :: XMLGenT (Clck ClckURL) XML
 postsHTML =
@@ -173,3 +177,4 @@ blog =
              <% postsHTML %>
             </div>
            </%>
+-}
