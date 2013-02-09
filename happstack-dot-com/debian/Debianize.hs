@@ -16,7 +16,7 @@ main =
        jstreePath <- Clckwrks.getDataFileName "jstree"
        json2Path  <- Clckwrks.getDataFileName "json2"
        log <- inputChangeLog "debian"
-       cabalToDebianization "." (customize jstreePath json2Path log defaultAtoms) >>= writeDebianization "."
+       debianization "." (customize jstreePath json2Path log defaultAtoms) >>= writeDebianization "."
 
 customize jstreePath json2Path log =
     modL control (\ y -> y {homepage = Just "http://www.happstack.com/"}) .
