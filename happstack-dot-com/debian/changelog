@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.3.1) unstable; urgency=low
+
+  * Updated to clckwrks 0.16
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Mon, 18 Feb 2013 17:37:54 -0600
+
 haskell-happstack-dot-com (0.2.4) unstable; urgency=low
 
   * Bumped to allow web-plugins 0.2
