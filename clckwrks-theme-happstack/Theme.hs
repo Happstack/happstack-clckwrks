@@ -38,7 +38,7 @@ navBarHTML (NavBar menuItems) =
     <div class="navbar navbar-static-full-width">
      <div class="navbar-inner">
       <div class="container">
-       <a class="brand" href="/">clckwrks</a>
+       <a class="brand" href="/">Happstack</a>
        <div class="nav-collapse">
         <ul class="nav">
          <% mapM mkNavBarItem menuItems %>
