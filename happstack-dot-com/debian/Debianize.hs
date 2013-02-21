@@ -1,8 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 import Data.Lens.Lazy (setL, modL)
 import Data.List as List (map, isPrefixOf, concat, foldr)
+import Data.Map as Map (insertWith)
 import Data.Maybe (fromMaybe)
-import Data.Set as Set (insert)
+import Data.Set as Set (insert, union, singleton)
 import Data.Text as T
 import Debian.Changes (ChangeLog)
 import Debian.Debianize
@@ -12,9 +13,8 @@ import Text.PrettyPrint.ANSI.Leijen (Pretty, pretty, text)
 
 main :: IO ()
 main =
-    do -- old <- inputDebianization "."
-       jstreePath <- Clckwrks.getDataFileName "jstree"
-       json2Path  <- Clckwrks.getDataFileName "json2"
+    do let jstreePath = "/usr/share/clckwrks-$CLCKWRKS/jstree"
+           json2Path  = "/usr/share/clckwrks-$CLCKWRKS/json2"
        log <- inputChangeLog "debian"
        debianization "." (customize jstreePath json2Path log defaultAtoms) >>= writeDebianization "."
 
@@ -25,6 +25,8 @@ customize jstreePath json2Path log =
     setL revision (Just "") .
     doWebsite (BinPkgName "happstack-dot-com-production") (theSite jstreePath json2Path (BinPkgName "happstack-dot-com-production")) .
     doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups" .
+    modL rulesFragments (insert (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))) .
+    modL installTo (Map.insertWith Set.union (BinPkgName "happstack-dot-com-production") (Set.singleton ("debian/default", "/etc/default/happstack-dot-com-production"))) .
     fixRules .
     tight .
     setL changelog (Just log) .
