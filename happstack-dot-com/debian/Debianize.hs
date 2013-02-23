@@ -13,7 +13,7 @@ import Text.PrettyPrint.ANSI.Leijen (Pretty, pretty, text)
 
 main :: IO ()
 main =
-    do log <- inputChangeLog "debian"
+    do log <- inputChangeLog top
        debianize top (return . customize . setL changelog (Just log))
     where
       top = Top "."
