@@ -1,5 +1,5 @@
 Name:                clckwrks-theme-happstack
-Version:             0.4.1
+Version:             0.4.3
 Synopsis:            Theme for happstack.com
 Description:         Theme for happstack.com for use with clckwrks.
 Homepage:            http://www.clckwrks.com/
@@ -16,6 +16,7 @@ Data-Files:
         data/css/bootstrap.css
         data/css/bootstrap-responsive.css
         data/css/bootstrap.min.css
+        data/css/hscolour.css
         data/img/glyphicons-halflings.png
         data/img/glyphicons-halflings-white.png
 

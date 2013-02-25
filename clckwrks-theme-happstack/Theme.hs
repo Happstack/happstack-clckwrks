@@ -68,7 +68,7 @@ standardTemplate ttl hdrs bdy =
      <head>
       <title><% ttl %></title>
       <link rel="stylesheet" type="text/css" media="screen" href=(ThemeData "css/bootstrap.css")  />
-      <link rel="stylesheet" type="text/css" href=(ThemeData "hscolour.css") />
+      <link rel="stylesheet" type="text/css" href=(ThemeData "css/hscolour.css") />
       <% hdrs %>
       <% googleAnalytics %>
      </head>
@@ -76,11 +76,6 @@ standardTemplate ttl hdrs bdy =
       <div id="wrap">
        <% genNavBar %>
        <div class="container">
-         <div class="row">
-          <div class="span8">
-           <h1><% ttl %></h1>
-          </div>
-         </div>
          <div class="row">
           <div class="span8">
            <% bdy %>
