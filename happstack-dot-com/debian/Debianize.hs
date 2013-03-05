@@ -9,12 +9,13 @@ import Debian.Changes (ChangeLog)
 import Debian.Debianize
 import Debian.Relation (Relation(..), VersionReq(..), SrcPkgName(..), BinPkgName(..))
 import qualified Paths_clckwrks as Clckwrks
+import Targets.SeeReason (defaultAtoms)
 import Text.PrettyPrint.ANSI.Leijen (Pretty, pretty, text)
 
 main :: IO ()
 main =
     do log <- inputChangeLog top
-       debianize top (return . customize . setL changelog (Just log))
+       debianize top (return . customize . setL changelog (Just log)) defaultAtoms
     where
       top = Top "."
 
