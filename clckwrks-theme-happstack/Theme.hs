@@ -67,8 +67,8 @@ standardTemplate ttl hdrs bdy =
     <html>
      <head>
       <title><% ttl %></title>
-      <link rel="stylesheet" type="text/css" media="screen" href=(ThemeData "css/bootstrap.css")  />
-      <link rel="stylesheet" type="text/css" href=(ThemeData "css/hscolour.css") />
+      <link rel="stylesheet" type="text/css" media="screen" href=(ThemeData "data/css/bootstrap.css")  />
+      <link rel="stylesheet" type="text/css" href=(ThemeData "data/css/hscolour.css") />
       <% hdrs %>
       <% googleAnalytics %>
      </head>
