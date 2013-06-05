@@ -87,7 +87,7 @@ standardTemplate ttl hdrs bdy =
 
       <footer id="footer" class="footer">
        <div class="container">
-         <p class="muted">Powered by <a href="http://happstack.com/">Happstack</a> and <a href="http://clckwrks.com/">clckwrks</a>. Copyright 2013, <a href="http://seereasonpartners.com/">SeeReason Partners, LLC</a></p>
+         <p class="muted">Powered by <a href="http://happstack.com/">Happstack</a> and <a href="http://clckwrks.com/">clckwrks</a>. Copyright 2013, <a href="http://seereason.com/">SeeReason Partners, LLC</a></p>
        </div>
       </footer>
 
