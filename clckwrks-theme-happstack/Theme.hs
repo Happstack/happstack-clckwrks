@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts, OverloadedStrings, RecordWildCards #-}
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Theme where
 
 import Clckwrks
@@ -9,7 +9,8 @@ import Clckwrks.ProfileData.Acid      (HasRole(..))
 import Data.Maybe                     (fromMaybe)
 import qualified Data.Set             as Set
 import Data.Text                      (Text, unpack)
-import HSP
+import HSP.XML
+import HSP.XMLGenerator
 import Paths_clckwrks_theme_happstack (getDataDir)
 
 ------------------------------------------------------------------------------
