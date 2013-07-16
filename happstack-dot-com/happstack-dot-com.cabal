@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.3.2
+Version:             0.4.0
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -9,7 +9,7 @@ Author:              Jeremy Shaw
 Maintainer:          Jeremy Shaw <jeremy@n-heptane.com>
 Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
-Build-type:          Simple
+Build-type:          Custom
 Cabal-version:       >=1.6
 
 Flag plugins
@@ -25,14 +25,15 @@ Executable happstack-dot-com-server
   ghc-options: -threaded -O2 -rtsopts -with-rtsopts=-I0
   cpp-options: -DCABAL
   Extensions: CPP
+  Build-tools:                   hsx2hs
   Build-depends:
         base                     >  4    && < 5,
         bytestring               >= 0.9  && < 0.11,
-        clckwrks                 >= 0.16 && < 0.18,
-        clckwrks-plugin-media    == 0.4.*,
-        clckwrks-plugin-ircbot   == 0.5.*,
-        clckwrks-plugin-page     == 0.1.*,
-        clckwrks-theme-happstack == 0.4.*,
+        clckwrks                 >= 0.18 && < 0.19,
+        clckwrks-plugin-media    == 0.5.*,
+        clckwrks-plugin-ircbot   == 0.6.*,
+        clckwrks-plugin-page     == 0.2.*,
+        clckwrks-theme-happstack == 0.5.*,
         containers               >= 0.4 && < 0.6,
         happstack-server         >= 7.0.4,
         mtl                      >= 2.0,

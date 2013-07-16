@@ -1,3 +1,9 @@
+haskell-happstack-dot-com (0.4.0) unstable; urgency=low
+
+  * update to hsp-0.9
+
+ -- Jeremy Shaw <jeremy@seereason.com>  Mon, 15 Jul 2013 19:21:15 -0500
+
 haskell-happstack-dot-com (0.3.1) unstable; urgency=low
 
   * Updated to clckwrks 0.16
