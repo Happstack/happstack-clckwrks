@@ -1,57 +1,60 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Data.Lens.Lazy (setL, modL)
-import Data.List as List (map, isPrefixOf, concat, foldr)
-import Data.Map as Map (insertWith)
-import Data.Maybe (fromMaybe)
-import Data.Set as Set (insert, union, singleton)
-import Data.Text as T
-import Debian.Changes (ChangeLog)
-import Debian.Debianize
-import Debian.Relation (Relation(..), VersionReq(..), SrcPkgName(..), BinPkgName(..))
-import qualified Paths_clckwrks as Clckwrks
-import Targets.SeeReason (defaultAtoms)
-import Text.PrettyPrint.ANSI.Leijen (Pretty, pretty, text)
+
+import Data.List as List (concat, map)
+import Data.Set (singleton)
+import Data.Text as T (lines, pack, Text, unlines)
+import Debian.Debianize (changelog, compat, control, debianization, writeDebianization, doBackups, doWebsite, execMap, inputChangeLog, installTo, missingDependencies, revision, rulesFragments, rulesHead, seereasonDefaultAtoms, sourceFormat, tightDependencyFixup, homepage, standardsVersion, evalDebT, newAtoms)
+import Debian.Debianize (InstallFile(InstallFile, destDir, destName, execName, sourceDir), Server(..), Site(..), Top(Top))
+import Debian.Debianize.Goodies (makeRulesHead)
+import Debian.Debianize.Prelude ((~=), (+=), (+++=))
+import Debian.Debianize.Types.SourceDebDescription (SourceDebDescription)
+import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
+import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
+import Text.PrettyPrint.ANSI.Leijen (Pretty(pretty))
+
+top :: Top
+top = Top "."
 
 main :: IO ()
 main =
-    do log <- inputChangeLog top
-       debianize top (return . customize . setL changelog (Just log)) defaultAtoms
-    where
-      top = Top "."
+    evalDebT (debianization top seereasonDefaultAtoms customize >> writeDebianization top) newAtoms
 
 customize =
-    modL control (\ y -> y {homepage = Just "http://www.happstack.com/"}) .
-    setL sourceFormat (Just Native3) .
-    modL missingDependencies (insert (BinPkgName "libghc-clckwrks-theme-happstack-doc")) .
-    setL revision (Just "") .
-    doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production")) .
-    doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups" .
-    modL rulesFragments (insert (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))) .
-    modL installTo (Map.insertWith Set.union (BinPkgName "happstack-dot-com-production") (Set.singleton ("debian/default", "/etc/default/happstack-dot-com-production"))) .
-    fixRules .
-    tight .
-    modL control (\ x -> x {standardsVersion = Just (StandardsVersion 3 9 4 Nothing)}) .
-    setL compat (Just 7)
+    do inputChangeLog top
+       execMap +++= ("hsx2hs", [[Rel (BinPkgName "hsx2hs") Nothing Nothing]])
+       homepage ~= Just "http://www.happstack.com/"
+       sourceFormat ~= Just Native3
+       missingDependencies += BinPkgName "libghc-clckwrks-theme-happstack-doc"
+       revision ~= Just ""
+       doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
+       doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups"
+       rulesFragments += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
+       installTo +++= (BinPkgName "happstack-dot-com-production", singleton ("debian/default", "/etc/default/happstack-dot-com-production"))
+       fixRules
+       tight
+       standardsVersion ~= Just (StandardsVersion 3 9 4 Nothing)
+       compat ~= Just 7
 
 serverNames = List.map BinPkgName ["happstack-dot-com-production"]
 
 -- Insert a line just above the debhelper.mk include
-fixRules deb =
-    modL rulesHead (\ mt -> (Just . f) (fromMaybe (getRulesHead deb) mt)) deb
+fixRules =
+    do hd <- makeRulesHead
+       rulesHead ~= Just (f hd)
     where
       f t = T.unlines $ List.concat $
             List.map (\ line -> if line == "include /usr/share/cdbs/1/rules/debhelper.mk"
                                 then ["DEB_SETUP_GHC_CONFIGURE_ARGS = -fbackups", "", line] :: [T.Text]
                                 else [line] :: [T.Text]) (T.lines t)
 
-tight deb = List.foldr (tightDependencyFixup
+tight = mapM_ (tightDependencyFixup
                          -- For each pair (A, B) make sure that this package requires the
                          -- same exact version of package B as the version of A currently
                          -- installed during the build.
                          [(BinPkgName "libghc-clckwrks-theme-happstack-dev", BinPkgName "haskell-clckwrks-theme-happstack-utils"),
                           (BinPkgName "libghc-clckwrks-plugin-media-dev", BinPkgName "haskell-clckwrks-plugin-media-utils"),
                           (BinPkgName "libghc-clckwrks-plugin-ircbot-dev", BinPkgName "haskell-clckwrks-plugin-ircbot-utils"),
-                          (BinPkgName "libghc-clckwrks-dev", BinPkgName "haskell-clckwrks-utils")]) deb serverNames
+                          (BinPkgName "libghc-clckwrks-dev", BinPkgName "haskell-clckwrks-utils")]) serverNames
 
 theSite :: BinPkgName -> Site
 theSite deb =
