@@ -20,7 +20,7 @@ import Paths_clckwrks_theme_happstack (getDataDir)
 theme :: Theme
 theme = Theme
     { themeName      = "happstack"
-    , _themeTemplate = standardTemplate
+    , themeStyles   = [standardStyle]
     , themeDataDir   = getDataDir
     }
 
@@ -94,3 +94,11 @@ standardTemplate ttl hdrs bdy =
 
      </body>
     </html>
+
+standardStyle :: ThemeStyle
+standardStyle = ThemeStyle
+    { themeStyleName        = "standard"
+    , themeStyleDescription = "standard view"
+    , themeStylePreview     = Nothing
+    , themeStyleTemplate    = standardTemplate
+    }
