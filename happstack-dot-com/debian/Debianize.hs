@@ -9,8 +9,8 @@ import Debian.Debianize.Goodies (makeRulesHead)
 import Debian.Debianize.Prelude ((~=), (+=), (+++=))
 import Debian.Debianize.Types.SourceDebDescription (SourceDebDescription)
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
+import Debian.Pretty (Pretty(pretty))
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
-import Text.PrettyPrint.ANSI.Leijen (Pretty(pretty))
 
 top :: Top
 top = Top "."
