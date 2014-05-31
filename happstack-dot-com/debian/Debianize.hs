@@ -16,8 +16,7 @@ top :: Top
 top = Top "."
 
 main :: IO ()
-main =
-    evalDebT (debianization top seereasonDefaultAtoms customize >> writeDebianization top) newAtoms
+main = newAtoms >>= evalDebT (debianization top seereasonDefaultAtoms customize >> writeDebianization top)
 
 customize =
     do inputChangeLog top
