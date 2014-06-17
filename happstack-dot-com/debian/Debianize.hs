@@ -12,12 +12,13 @@ import Debian.Debianize.Types.SourceDebDescription (SourceDebDescription)
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
 import Debian.Pretty (Pretty(pretty))
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
+import Distribution.Compiler (CompilerFlavor(GHC))
 
 top :: Top
 top = Top "."
 
 main :: IO ()
-main = newAtoms >>= evalDebT (debianization top seereasonDefaultAtoms customize >> writeDebianization top)
+main = newAtoms GHC >>= evalDebT (debianization top seereasonDefaultAtoms customize >> writeDebianization top)
 
 customize =
     do inputChangeLog top
