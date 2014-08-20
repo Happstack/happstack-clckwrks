@@ -15,7 +15,7 @@ import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
 
 main :: IO ()
-main = newAtoms GHC >>= evalDebT (debianization seereasonDefaultAtoms customize >> writeDebianization)
+main = newAtoms >>= evalDebT (debianization seereasonDefaultAtoms customize >> writeDebianization)
 
 customize =
     do inputChangeLog
@@ -27,7 +27,7 @@ customize =
        doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
        doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups"
        rulesFragments += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
-       installTo +++= (BinPkgName "happstack-dot-com-production", singleton ("debian/default", "/etc/default/happstack-dot-com-production"))
+       installTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production"
        fixRules
        tight
        standardsVersion ~= Just (StandardsVersion 3 9 4 Nothing)
