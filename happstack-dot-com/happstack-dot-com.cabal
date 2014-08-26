@@ -50,6 +50,6 @@ Executable happstack-dot-com-backups
                   archive >= 1.2.9,
                   cabal-debian >= 4,
                   Extra,
-                  network
+                  network-uri
  else
   Buildable: False
