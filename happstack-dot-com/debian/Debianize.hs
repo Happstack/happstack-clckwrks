@@ -10,7 +10,7 @@ import Debian.Debianize.Goodies (makeRulesHead)
 import Debian.Debianize.Prelude ((~=), (+=), (+++=))
 import Debian.Debianize.Types.SourceDebDescription (SourceDebDescription)
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
-import Debian.Pretty (Pretty(pretty))
+import Debian.Pretty (ppDisplay)
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
 
@@ -78,7 +78,7 @@ theServer deb@(BinPkgName _) =
                               ]
            , installFile =
                      InstallFile { execName   = "happstack-dot-com-server"
-                                 , destName   = show (pretty deb)
+                                 , destName   = ppDisplay deb
                                  , sourceDir  = Nothing
                                  , destDir    = Nothing }
            }
