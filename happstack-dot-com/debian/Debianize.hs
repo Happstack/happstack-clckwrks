@@ -4,7 +4,7 @@ import Data.List as List (concat, map)
 import Data.Set (singleton)
 import Data.Text as T (lines, pack, Text, unlines)
 import Debian.AutoBuilder.Details.Atoms (seereasonDefaultAtoms)
-import Debian.Debianize (changelog, compat, control, debianization, writeDebianization, doBackups, doWebsite, execMap, inputChangeLog, installTo, missingDependencies, revision, rulesFragments, rulesHead, sourceFormat, tightDependencyFixup, homepage, standardsVersion, evalDebT, newAtoms)
+import Debian.Debianize (changelog, compat, control, debianize, writeDebianization, doBackups, doWebsite, execMap, inputChangeLog, installTo, missingDependencies, revision, rulesFragments, rulesHead, sourceFormat, tightDependencyFixup, homepage, standardsVersion, evalDebT, newAtoms)
 import Debian.Debianize (InstallFile(InstallFile, destDir, destName, execName, sourceDir), Server(..), Site(..))
 import Debian.Debianize.Goodies (makeRulesHead)
 import Debian.Debianize.Prelude ((~=), (+=), (+++=))
@@ -15,7 +15,7 @@ import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
 
 main :: IO ()
-main = newAtoms >>= evalDebT (debianization seereasonDefaultAtoms customize >> writeDebianization)
+main = newAtoms >>= evalDebT (debianize (seereasonDefaultAtoms >> customize) >> writeDebianization)
 
 customize =
     do inputChangeLog
