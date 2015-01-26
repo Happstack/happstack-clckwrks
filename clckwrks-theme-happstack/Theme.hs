@@ -3,15 +3,20 @@
 module Theme where
 
 import Clckwrks
+import Clckwrks.Authenticate.Plugin   (authenticatePlugin)
+import Clckwrks.Authenticate.URL      (AuthURL(Auth))
 import Clckwrks.NavBar.API            (getNavBarData)
 import Clckwrks.NavBar.Types          (NavBar(..), NavBarItem(..))
 import Clckwrks.ProfileData.Acid      (HasRole(..))
+import Control.Monad.State            (get)
 import Data.Maybe                     (fromMaybe)
 import qualified Data.Set             as Set
 import Data.Text                      (Text, unpack)
+import Happstack.Authenticate.Password.URL (PasswordURL(UsernamePasswordCtrl), passwordAuthenticationMethod)
 import HSP.XML
 import HSP.XMLGenerator
 import Paths_clckwrks_theme_happstack (getDataDir)
+import Web.Plugins.Core               (pluginName, getPluginRouteFn)
 
 ------------------------------------------------------------------------------
 -- theme
@@ -64,16 +69,25 @@ standardTemplate :: ( EmbedAsChild (ClckT ClckURL (ServerPartT IO)) headers
                  -> headers
                  -> body
                  -> XMLGenT (ClckT ClckURL (ServerPartT IO)) XML
-standardTemplate ttl hdrs bdy =
+standardTemplate ttl hdrs bdy = do
+    p <- plugins <$> get
+    (Just authShowURL) <- getPluginRouteFn p (pluginName authenticatePlugin)
+    let passwordShowURL u = authShowURL (Auth $ AuthenticationMethods $ Just (passwordAuthenticationMethod, toPathSegments u)) []
     <html>
      <head>
       <title><% ttl %></title>
       <link rel="stylesheet" type="text/css" media="screen" href=(ThemeData "data/css/bootstrap.css")  />
       <link rel="stylesheet" type="text/css" href=(ThemeData "data/css/hscolour.css") />
+      <script src="http://code.jquery.com/jquery-latest.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular-route.min.js"></script>
+      <script src=(passwordShowURL UsernamePasswordCtrl)></script>
+      <script src=(JS ClckwrksApp)></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <% hdrs %>
       <% googleAnalytics %>
      </head>
-     <body>
+     <body ng-app="clckwrksApp" ng-controller="AuthenticationCtrl">
       <div id="wrap">
        <% genNavBar %>
        <div class="container">
