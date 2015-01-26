@@ -1,25 +1,25 @@
-{-# LANGUAGE FlexibleContexts, OverloadedStrings, PackageImports, RankNTypes #-}
+{-# LANGUAGE FlexibleContexts, OverloadedStrings #-}
 module Main where
 
 import Clckwrks
 -- import Clckwrks.Admin.Template
-import Clckwrks.GetOpts          (parseArgs, clckwrksOpts)
-import Clckwrks.Server           (simpleClckwrks)
-import Clckwrks.Plugin           (clckPlugin)
-import Clckwrks.IrcBot.Plugin    (ircBotPlugin)
-import Clckwrks.Media.Plugin     (mediaPlugin)
-import Clckwrks.Page.Plugin      (pagePlugin)
-import Clckwrks.Page.URL         (PageURL(..))
-import Control.Applicative       ((<$>))
-import Control.Monad             (msum)
-import Control.Monad.Trans
-import qualified Data.Map         as Map
-import Data.Text                  (Text, unpack)
-import qualified Data.Text        as Text
-import "clckwrks-theme-happstack" Theme
-import Web.Routes                 (showURL)
-import Web.Plugins.Core           (Plugin(..), addHandler, getPluginRouteFn, initPlugin, setTheme)
-import System.Environment         (getArgs)
+import Clckwrks.GetOpts             (parseArgs, clckwrksOpts)
+import Clckwrks.Server              (simpleClckwrks)
+import Clckwrks.Plugin              (clckPlugin)
+import Clckwrks.Authenticate.Plugin (authenticatePlugin)
+import Clckwrks.IrcBot.Plugin       (ircBotPlugin)
+import Clckwrks.Media.Plugin        (mediaPlugin)
+import Clckwrks.Page.Plugin         (pagePlugin)
+import Clckwrks.Page.URL            (PageURL(..))
+import Control.Applicative          ((<$>))
+import Control.Monad                (msum)
+import qualified Data.Map           as Map
+import Data.Text                    (Text, unpack)
+import qualified Data.Text          as Text
+import Theme                        (theme)
+import Web.Routes                   (showURL)
+import Web.Plugins.Core             (Plugin(..), addHandler, getPluginRouteFn, initPlugin, setTheme)
+import System.Environment           (getArgs)
 
 
 ------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ initHook baseURI clckState cc =
     do let p = plugins clckState
        addHandler p "docs" docHandler
        addHandler p "blog" blogHandler
+       initPlugin p "http://www.happstack.com" authenticatePlugin
        initPlugin p "" clckPlugin
        initPlugin p "" pagePlugin
        initPlugin p "" ircBotPlugin
