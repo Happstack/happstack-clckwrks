@@ -1,36 +1,41 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+import Control.Category ((.))
 import Data.List as List (concat, map)
-import Data.Set (singleton)
+import Data.Set as Set (singleton, insert)
 import Data.Text as T (lines, pack, Text, unlines)
 import Debian.AutoBuilder.Details.Atoms (seereasonDefaultAtoms)
-import Debian.Debianize (changelog, compat, control, debianize, writeDebianization, doBackups, doWebsite, execMap, inputChangeLog, installTo, missingDependencies, revision, rulesFragments, rulesHead, rulesSettings, sourceFormat, tightDependencyFixup, homepage, standardsVersion, evalDebT, newAtoms)
-import Debian.Debianize (InstallFile(InstallFile, destDir, destName, execName, sourceDir), Server(..), Site(..))
+import Debian.Debianize (changelog, compat, control, debianize, writeDebianization, doBackups, doWebsite, execMap, inputChangeLog, installTo, missingDependencies, revision, rulesFragments, rulesHead, rulesSettings, sourceFormat, tightDependencyFixup, homepage, standardsVersion, CabalT, evalCabalT, newAtoms, debInfo, atomSet)
+import Debian.Debianize (InstallFile(InstallFile, destDir, destName, execName, sourceDir), Server(..), Site(..), Atom(InstallTo))
+import Debian.Debianize.InputCabalPackageDescription (newFlags)
+import Debian.Debianize.Monad (liftCabal)
 import Debian.Debianize.Prelude ((~=), (%=), (+=), (+++=))
 import Debian.Debianize.Types.SourceDebDescription (SourceDebDescription)
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
 import Debian.Pretty (ppDisplay)
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
+import Prelude hiding ((.))
 
 main :: IO ()
-main = newAtoms >>= evalDebT (debianize (seereasonDefaultAtoms >> customize) >> writeDebianization)
+main = newFlags >>= newAtoms >>= evalCabalT (debianize (seereasonDefaultAtoms >> customize) >> liftCabal writeDebianization)
 
+customize :: CabalT IO ()
 customize =
-    do inputChangeLog
+    do liftCabal inputChangeLog
        execMap +++= ("hsx2hs", [[Rel (BinPkgName "hsx2hs") Nothing Nothing]])
-       homepage ~= Just "http://www.happstack.com/"
-       sourceFormat ~= Just Native3
+       (homepage . debInfo) ~= Just "http://www.happstack.com/"
+       (sourceFormat . debInfo) ~= Just Native3
        missingDependencies += BinPkgName "libghc-clckwrks-theme-happstack-doc"
        revision ~= Just ""
        doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
        doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups"
-       rulesFragments += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
-       installTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production"
-       fixRules
-       tight
-       standardsVersion ~= Just (StandardsVersion 3 9 4 Nothing)
-       compat ~= Just 7
+       (rulesFragments . debInfo) += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
+       (atomSet . debInfo) %= (Set.insert $ InstallTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production")
+       liftCabal fixRules
+       liftCabal tight
+       (standardsVersion . debInfo) ~= Just (StandardsVersion 3 9 4 Nothing)
+       (compat . debInfo) ~= Just 7
 
 serverNames = List.map BinPkgName ["happstack-dot-com-production"]
 
