@@ -4,7 +4,7 @@ import Control.Category ((.))
 import Data.List as List (concat, map)
 import Data.Set as Set (singleton, insert)
 import Data.Text as T (lines, pack, Text, unlines)
-import Debian.AutoBuilder.Details.Atoms (seereasonDefaultAtoms)
+import Debian.AutoBuilder.Details.CabalInfo (seereasonDefaults)
 import Debian.Debianize
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
 import Debian.Pretty (ppDisplay)
@@ -13,7 +13,7 @@ import Distribution.Compiler (CompilerFlavor(GHC))
 import Prelude hiding ((.))
 
 main :: IO ()
-main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaultAtoms >> customize) >> liftCabal writeDebianization)
+main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaults >> customize) >> liftCabal writeDebianization)
 
 customize :: CabalT IO ()
 customize =
