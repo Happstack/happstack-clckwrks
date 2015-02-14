@@ -18,19 +18,19 @@ main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaults >>
 customize :: CabalT IO ()
 customize =
     do liftCabal inputChangeLog
-       (execMap . debInfo) +++= ("hsx2hs", [[Rel (BinPkgName "hsx2hs") Nothing Nothing]])
-       (homepage . control . debInfo) ~= Just "http://www.happstack.com/"
-       (sourceFormat . debInfo) ~= Just Native3
-       (missingDependencies . debInfo) += BinPkgName "libghc-clckwrks-theme-happstack-doc"
-       (revision . debInfo) ~= Just ""
+       (debInfo . execMap) +++= ("hsx2hs", [[Rel (BinPkgName "hsx2hs") Nothing Nothing]])
+       (debInfo . control . homepage) ~= Just "http://www.happstack.com/"
+       (debInfo . sourceFormat) ~= Just Native3
+       (debInfo . missingDependencies) += BinPkgName "libghc-clckwrks-theme-happstack-doc"
+       (debInfo . revision) ~= Just ""
        doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
        doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups"
-       (rulesFragments . debInfo) += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
-       (atomSet . debInfo) %= (Set.insert $ InstallTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production")
+       (debInfo . rulesFragments) += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
+       (debInfo . atomSet) %= (Set.insert $ InstallTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production")
        liftCabal fixRules
        liftCabal tight
-       (standardsVersion . control . debInfo) ~= Just (StandardsVersion 3 9 4 Nothing)
-       (compat . debInfo) ~= Just 7
+       (debInfo . control . standardsVersion) ~= Just (StandardsVersion 3 9 4 Nothing)
+       (debInfo . compat) ~= Just 7
 
 serverNames = List.map BinPkgName ["happstack-dot-com-production"]
 
