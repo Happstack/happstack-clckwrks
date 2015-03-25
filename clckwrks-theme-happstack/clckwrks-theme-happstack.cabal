@@ -1,32 +1,41 @@
 Name:                clckwrks-theme-happstack
-Version:             0.6.3
+Version:             0.7.0
 Synopsis:            Theme for happstack.com
 Description:         Theme for happstack.com for use with clckwrks.
-Homepage:            http://www.clckwrks.com/
+Homepage:            http://www.happstack.com/
 License:             BSD3
 License-file:        LICENSE
 Author:              Jeremy Shaw
 Maintainer:          Jeremy Shaw <jeremy@n-heptane.com>
-Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
+Copyright:           2015 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
-Build-type:          Custom
+Build-type:          Simple
 Cabal-version:       >=1.6
 Data-Files:
-        data/css/bootstrap-responsive.min.css
-        data/css/bootstrap.css
-        data/css/bootstrap-responsive.css
-        data/css/bootstrap.min.css
-        data/css/hscolour.css
-        data/img/glyphicons-halflings.png
-        data/img/glyphicons-halflings-white.png
+   data/css/bootstrap-theme.css
+   data/css/bootstrap-theme.css.map
+   data/css/bootstrap-theme.min.css
+   data/css/bootstrap.css
+   data/css/bootstrap.css.map
+   data/css/bootstrap.min.css
+   data/css/happstack-theme.css
+   data/css/happstack-theme.min.css
+   data/css/hscolour.css
+   data/fonts/glyphicons-halflings-regular.eot
+   data/fonts/glyphicons-halflings-regular.svg
+   data/fonts/glyphicons-halflings-regular.ttf
+   data/fonts/glyphicons-halflings-regular.woff
+   data/fonts/glyphicons-halflings-regular.woff2
+   data/js/bootstrap.js
+   data/js/bootstrap.min.js
+   data/js/npm.js
 
 source-repository head
-    type:     darcs
-    subdir:   happstack-clckwrks
-    location: http://hub.darcs.net/Happstack/happstack-clckwrks
+    type:     git
+    subdir:   clckwrks-theme-happstack
+    location: https://github.com/Happstack/happstack-clckwrks
 
 Library
-  Build-tools:         hsx2hs
   Exposed-modules:     Theme
                        Paths_clckwrks_theme_happstack
 
@@ -36,6 +45,7 @@ Library
         containers             >= 0.4  && < 0.6,
         happstack-authenticate >= 2.0  && < 2.2,
         hsp                    >= 0.9  && < 0.12,
+        hsx2hs                 >= 0.13 && < 0.14,
         mtl                    >= 2.0  && < 2.3,
         text                   >= 0.11 && < 1.3,
         web-plugins            >= 0.2  && < 0.3
