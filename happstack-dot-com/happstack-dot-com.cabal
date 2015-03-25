@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.4.6
+Version:             0.4.7
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -11,6 +11,11 @@ Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
 Build-type:          Custom
 Cabal-version:       >=1.6
+
+source-repository head
+    type:     git
+    subdir:   happstack-dot-com
+    location: https://github.com/Happstack/happstack-clckwrks
 
 Flag plugins
      Description: enable dynamic recompilation
@@ -33,7 +38,7 @@ Executable happstack-dot-com-server
         clckwrks-plugin-media    == 0.6.*,
         clckwrks-plugin-ircbot   == 0.6.*,
         clckwrks-plugin-page     == 0.3.*,
-        clckwrks-theme-happstack == 0.6.*,
+        clckwrks-theme-happstack == 0.7.*,
         containers               >= 0.4 && < 0.6,
         happstack-server         >= 7.0.4,
         mtl                      >= 2.0,
