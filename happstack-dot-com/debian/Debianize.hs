@@ -7,7 +7,7 @@ import Data.Text as T (lines, pack, Text, unlines)
 import Debian.AutoBuilder.Details.Versions (seereasonDefaults)
 import Debian.Debianize
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
-import Debian.Pretty (ppDisplay)
+import Debian.Pretty (ppShow)
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
 import Prelude hiding ((.))
@@ -70,7 +70,7 @@ theServer deb@(BinPkgName _) =
                               ]
            , installFile =
                      InstallFile { execName   = "happstack-dot-com-server"
-                                 , destName   = ppDisplay deb
+                                 , destName   = ppShow deb
                                  , sourceDir  = Nothing
                                  , destDir    = Nothing }
            }
