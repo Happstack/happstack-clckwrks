@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Control.Category ((.))
+import Control.Lens
 import Data.List as List (concat, map)
+import Data.Map as Map (insertWith)
+import Data.Monoid (mappend)
 import Data.Set as Set (singleton, insert)
 import Data.Text as T (lines, pack, Text, unlines)
 import Debian.AutoBuilder.Details.Versions (seereasonDefaults)
@@ -10,7 +12,6 @@ import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion
 import Debian.Pretty (ppShow)
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
-import Prelude hiding ((.))
 
 main :: IO ()
 main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaults >> customize) >> liftCabal writeDebianization)
@@ -18,19 +19,19 @@ main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaults >>
 customize :: CabalT IO ()
 customize =
     do liftCabal inputChangeLog
-       (debInfo . execMap) +++= ("hsx2hs", [[Rel (BinPkgName "hsx2hs") Nothing Nothing]])
-       (debInfo . control . homepage) ~= Just "http://www.happstack.com/"
-       (debInfo . sourceFormat) ~= Just Native3
-       (debInfo . missingDependencies) += BinPkgName "libghc-clckwrks-theme-happstack-doc"
-       (debInfo . revision) ~= Just ""
+       (debInfo . execMap) %= Map.insertWith mappend "hsx2hs" [[Rel (BinPkgName "hsx2hs") Nothing Nothing]]
+       (debInfo . control . homepage) .= Just "http://www.happstack.com/"
+       (debInfo . sourceFormat) .= Just Native3
+       (debInfo . missingDependencies) %= Set.insert (BinPkgName "libghc-clckwrks-theme-happstack-doc")
+       (debInfo . revision) .= Just ""
        doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
        doBackups (BinPkgName "happstack-dot-com-backups") "happstack-dot-com-backups"
-       (debInfo . rulesFragments) += (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
-       (debInfo . atomSet) %= (Set.insert $ InstallTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production")
+       (debInfo . rulesFragments) %= Set.insert (pack (Prelude.unlines ["build/happstack-dot-com-production::", "\techo CLCKWRKS=`ghc-pkg field clckwrks version | sed 's/version: //'` > debian/default"]))
+       (debInfo . atomSet) %= Set.insert (InstallTo (BinPkgName "happstack-dot-com-production") "debian/default" "/etc/default/happstack-dot-com-production")
        liftCabal fixRules
        liftCabal tight
-       (debInfo . control . standardsVersion) ~= Just (StandardsVersion 3 9 4 Nothing)
-       (debInfo . compat) ~= Just 7
+       (debInfo . control . standardsVersion) .= Just (StandardsVersion 3 9 4 Nothing)
+       (debInfo . compat) .= Just 7
 
 serverNames = List.map BinPkgName ["happstack-dot-com-production"]
 
