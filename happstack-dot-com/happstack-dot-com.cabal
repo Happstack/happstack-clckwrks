@@ -54,7 +54,7 @@ Executable happstack-dot-com-backups
    Build-depends: base > 4 && < 5,
                   archive >= 1.2.9,
                   cabal-debian >= 4.24,
-                  Extra,
+                  sr-extra,
                   network-uri
  else
   Buildable: False
