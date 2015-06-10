@@ -8,20 +8,21 @@ import Data.Set as Set (singleton, insert)
 import Data.Text as T (lines, pack, Text, unlines)
 import Debian.AutoBuilder.Details.Versions (seereasonDefaults)
 import Debian.Debianize
+import Debian.Debianize.Optparse (parseProgramArguments, CommandLineOptions(..))
 import Debian.Policy (databaseDirectory, SourceFormat(Native3), StandardsVersion(StandardsVersion))
 import Debian.Pretty (ppShow)
 import Debian.Relation (BinPkgName(BinPkgName), Relation(Rel))
 import Distribution.Compiler (CompilerFlavor(GHC))
 
 main :: IO ()
-main = newFlags >>= newCabalInfo >>= evalCabalT (debianize (seereasonDefaults >> customize) >> liftCabal writeDebianization)
+main = parseProgramArguments >>= newCabalInfo . _flags >>= evalCabalT (debianize (seereasonDefaults >> customize) >> liftCabal writeDebianization)
 
 customize :: CabalT IO ()
 customize =
     do liftCabal inputChangeLog
        (debInfo . execMap) %= Map.insertWith mappend "hsx2hs" [[Rel (BinPkgName "hsx2hs") Nothing Nothing]]
        (debInfo . control . homepage) .= Just "http://www.happstack.com/"
-       (debInfo . sourceFormat) .= Just Native3
+       (debInfo . sourceFormat) .= Native3
        (debInfo . missingDependencies) %= Set.insert (BinPkgName "libghc-clckwrks-theme-happstack-doc")
        (debInfo . revision) .= Just ""
        doWebsite (BinPkgName "happstack-dot-com-production") (theSite (BinPkgName "happstack-dot-com-production"))
