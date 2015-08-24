@@ -43,7 +43,7 @@ Library
         base                              < 5,
         clckwrks               >= 0.23 && < 0.24,
         containers             >= 0.4  && < 0.6,
-        happstack-authenticate >= 2.0  && < 2.2,
+        happstack-authenticate >= 2.0  && < 2.3,
         hsp                    >= 0.9  && < 0.12,
         hsx2hs                 >= 0.13 && < 0.14,
         mtl                    >= 2.0  && < 2.3,
