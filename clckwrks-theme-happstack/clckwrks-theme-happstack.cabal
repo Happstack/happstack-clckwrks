@@ -1,5 +1,5 @@
 Name:                clckwrks-theme-happstack
-Version:             0.7.0
+Version:             0.7.1
 Synopsis:            Theme for happstack.com
 Description:         Theme for happstack.com for use with clckwrks.
 Homepage:            http://www.happstack.com/
@@ -43,7 +43,7 @@ Library
         base                              < 5,
         clckwrks               >= 0.23 && < 0.24,
         containers             >= 0.4  && < 0.6,
-        happstack-authenticate >= 2.0  && < 2.3,
+        happstack-authenticate >= 2.3  && < 2.4,
         hsp                    >= 0.9  && < 0.12,
         hsx2hs                 >= 0.13 && < 0.14,
         mtl                    >= 2.0  && < 2.3,

@@ -60,6 +60,7 @@ initHook baseURI clckState cc =
        addHandler p "docs" docHandler
        addHandler p "blog" blogHandler
        initPlugin p "http://www.happstack.com" authenticatePlugin
+--       initPlugin p "http://localhost:8000" authenticatePlugin
        initPlugin p "" clckPlugin
        initPlugin p "" pagePlugin
        initPlugin p "" ircBotPlugin
