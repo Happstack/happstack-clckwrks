@@ -63,7 +63,7 @@ initHook baseURI clckState cc =
 --       initPlugin p "http://localhost:8000" authenticatePlugin
        initPlugin p "" clckPlugin
        initPlugin p "" pagePlugin
-       initPlugin p "" ircBotPlugin
+       -- initPlugin p "" ircBotPlugin
        initPlugin p "" mediaPlugin
        setTheme p (Just theme)
        return (clckState, cc)
