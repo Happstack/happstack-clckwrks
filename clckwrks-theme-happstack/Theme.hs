@@ -94,7 +94,7 @@ standardTemplate :: ( EmbedAsChild (ClckT ClckURL (ServerPartT IO)) headers
                  -> XMLGenT (ClckT ClckURL (ServerPartT IO)) XML
 standardTemplate ttl hdr bdy = do
     p <- plugins <$> get
-    (Just authRouteFn) <- getPluginRouteFn p (pluginName authenticatePlugin)
+    ~(Just authRouteFn) <- getPluginRouteFn p (pluginName authenticatePlugin)
     [hsx|
     <html>
      <head>
