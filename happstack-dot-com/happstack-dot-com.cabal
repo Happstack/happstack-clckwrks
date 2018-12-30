@@ -1,5 +1,5 @@
 Name:                happstack-dot-com
-Version:             0.4.9
+Version:             0.4.9.1
 Synopsis:            happstack.com
 Description:         The happstack.com website.
 Homepage:            http://www.happstack.com/
@@ -39,7 +39,7 @@ Executable happstack-dot-com-server
 --        clckwrks-plugin-ircbot   == 0.6.*,
         clckwrks-plugin-page     >= 0.3 && < 0.5,
         clckwrks-theme-happstack == 0.7.*,
-        containers               >= 0.4 && < 0.6,
+        containers               >= 0.4 && < 0.7,
         happstack-server         >= 7.0.4,
         mtl                      >= 2.0,
         text                     >= 0.11 && < 1.3,

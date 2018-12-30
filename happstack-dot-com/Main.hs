@@ -70,7 +70,7 @@ initHook baseURI clckState cc =
 
 blogHandler :: ClckPlugins -> [Text] -> ClckT ClckURL (ServerPartT IO) Response
 blogHandler plugins paths =
-    do (Just showPageURL) <- getPluginRouteFn plugins (pluginName pagePlugin)
+    do ~(Just showPageURL) <- getPluginRouteFn plugins (pluginName pagePlugin)
        case paths of
          [] ->
             do let blogURL = showPageURL Blog []
