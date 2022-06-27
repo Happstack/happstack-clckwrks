@@ -83,6 +83,6 @@ blogHandler plugins paths =
 docHandler :: ClckPlugins -> [Text] -> ClckT ClckURL (ServerPartT IO) Response
 docHandler _plugins paths =
     localRq (\rq -> rq { rqPaths = map unpack paths }) $
-      msum [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack-crashcourse"
-           , serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack/7"
+      msum [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack-crashcourse"
+           , serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack/7"
            ]
