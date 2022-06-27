@@ -59,7 +59,7 @@ initHook baseURI clckState cc =
     do let p = plugins clckState
        addHandler p "docs" docHandler
        addHandler p "blog" blogHandler
-       initPlugin p "http://www.happstack.com" authenticatePlugin
+       initPlugin p "https://www.happstack.com" authenticatePlugin
 --       initPlugin p "http://localhost:8000" authenticatePlugin
        initPlugin p "" clckPlugin
        initPlugin p "" pagePlugin
@@ -83,6 +83,6 @@ blogHandler plugins paths =
 docHandler :: ClckPlugins -> [Text] -> ClckT ClckURL (ServerPartT IO) Response
 docHandler _plugins paths =
     localRq (\rq -> rq { rqPaths = map unpack paths }) $
-      msum [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack-crashcourse"
-           , serveDirectory EnableBrowsing [] "/home/jeremy/public_html/happstack/7"
+      msum [ dir "crashcourse" $ serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack-crashcourse"
+           , serveDirectory EnableBrowsing [] "/home/stepcut/public_html/happstack/7"
            ]

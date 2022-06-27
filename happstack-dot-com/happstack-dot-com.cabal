@@ -9,8 +9,8 @@ Author:              Jeremy Shaw
 Maintainer:          Jeremy Shaw <jeremy@n-heptane.com>
 Copyright:           2012 Jeremy Shaw, SeeReason Partners LLC
 Category:            Clckwrks
-Build-type:          Custom
-Cabal-version:       >=1.6
+Build-type:          Simple
+Cabal-version:       1.18
 
 source-repository head
     type:     git
@@ -26,15 +26,16 @@ Flag backups
      Default: False
 
 Executable happstack-dot-com-server
+  default-language:    Haskell2010
   Main-is: Main.hs
   ghc-options: -threaded -O2 -rtsopts -with-rtsopts=-I0
   cpp-options: -DCABAL
-  Extensions: CPP
+  Default-Extensions: CPP
   Build-tools:                   hsx2hs
   Build-depends:
         base                     >  4    && < 5,
-        bytestring               >= 0.9  && < 0.11,
-        clckwrks                 >= 0.23 && < 0.25,
+        bytestring               >= 0.9  && < 0.12,
+        clckwrks                 >= 0.23 && < 0.29,
         clckwrks-plugin-media    == 0.6.*,
 --        clckwrks-plugin-ircbot   == 0.6.*,
         clckwrks-plugin-page     >= 0.3 && < 0.5,
@@ -42,15 +43,16 @@ Executable happstack-dot-com-server
         containers               >= 0.4 && < 0.7,
         happstack-server         >= 7.0.4,
         mtl                      >= 2.0,
-        text                     >= 0.11 && < 1.3,
-        web-plugins              >= 0.1 && < 0.3,
+        text                     >= 0.11 && < 2.1,
+        web-plugins              >= 0.1 && < 0.5,
         web-routes               == 0.27.*
 
 Executable happstack-dot-com-backups
+ default-language:    Haskell2010
  Main-Is: Backups.hs
  if flag(backups)
    Buildable: True
-   GHC-Options: -threaded -Wall -Wwarn -O2 -fno-warn-name-shadowing -fno-warn-missing-signatures -fwarn-tabs -fno-warn-unused-binds -fno-warn-orphans -fwarn-unused-imports -fno-spec-constr
+   GHC-Options: -threaded -Wall -Wwarn -fno-warn-name-shadowing -fno-warn-missing-signatures -fwarn-tabs -fno-warn-unused-binds -fno-warn-orphans -fwarn-unused-imports -fno-spec-constr
    Build-depends: base > 4 && < 5,
                   archive >= 1.2.9,
                   cabal-debian >= 4.24,
